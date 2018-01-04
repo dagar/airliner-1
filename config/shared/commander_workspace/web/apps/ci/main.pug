@@ -1,4 +1,5 @@
 {% extends "../../common/layout.pug" %}//TODO:find common solution
+{% load filters_and_tags %}
 
 block header
         i.fa-fw.fa.fa-signal
@@ -299,35 +300,36 @@ block main
                     th(style="width: 150px") State
                     th MsgID
                     th(style="width: 150px") Action
-                tbody#thistablebody1
-                  script.
-                    function addrow(str,table){
-                    //var tbody = table.children[0];
-                    var length = table.children.length;
-                    var row = tbody.insertRow(length-1);
-                    row.innerHTML =str
-                    }
-                    var table = document.getElementById('thistablebody1');
-                    for (var slotIdx = 0; slotIdx < schDef.slots.length; ++slotIdx) {
-                      var slotID = schDef.slots[slotIdx].id;
-                      var strSlotID = '' + slotID;
-                        for (var actIdx = 0; actIdx < schDef.slots[slotIdx].activities.length; ++actIdx){
-                          var actID = schDef.slots[slotIdx].activities[actIdx];
-                          var strActID =  '' + actID;
-                          var entryID = (schDef.entriesPerSlot * slotID) + actID;
-                          var strEntryID = '' + entryID;
-                          var tlmEntryState = "{'tlm':[{'name':'/CFS/SCH/EntryState_'+entryID}]}";
-                          var tlmMsgID = "{'tlm':[{'name':'/CFS/SCH/MsgID_'+entryID}]}";
-                          var cmdEnableEntry =" {'cmd': {'name':'/CFS/SCH/EnableEntry', 'argument':[{'name':'Slot', 'value':strSlotID},{'name':'Entry', 'value':strActID}]}}";
-                          var cmdDisableEntry = "{'cmd': {'name':'/CFS/SCH/DisableEntry', 'argument':[{'name':'Slot', 'value':strSlotID},{'name':'Entry', 'value':strActID}]}}";
-                          var txt = "<td>"+slotID+"</td>"+"<td>"+strActID+"</td>"+"<td><span data-sage="+tlmEntryState+">---</span></td>"+"<td><span data-sage="+tlmMsgID+">---</span></td>"+
-                          "<td>"+
-                          "<div class = 'btn-group dropup'>"+
-                          "<button class=\"btn btn-xs btn-primary btn-labeled\" data-sage=\" "+cmdEnableEntry+" \">Ena</button>"+
-                          "<button class=\"btn btn-xs btn-primary btn-labeled\" data-sage=\" "+cmdDisableEntry+" \">Dis</button>"+
-                          "</div>"+
-                          "</td>";
-                          addrow(txt,table);
-                        }
-
-                    }
+                tbody
+                  {% for each in obj.schDef.slots %}
+                  tr
+                    td {{each.id}}
+                    {% for acts in each.activities %}
+                    td {{acts}}
+                    td
+                      span(data-sage="{tlm:[{name:'/CFS/SCH/EntryState_{{obj.schDef.entriesPerSlot|multi:each.id|add:acts}}'}]}") ---
+                    td
+                      span(data-sage="{tlm:[{name:'/CFS/SCH/MsgID_{{obj.schDef.entriesPerSlot|multi:each.id|add:acts}}'}]}") ---
+                    td
+                      .btn-group.dropup
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableEntry) Ena
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableEntry) Dis
+                    {% endfor %}
+                  {% endfor %}
+            .table-responsive
+              table.table.table-bordered.table-condensed
+                thead
+                  tr
+                    th(style="width: 100px") Group Name
+                    th(style="width: 100px") Group ID
+                    th(style="width: 150px") Action
+                tbody
+                  {% for each in obj.schDef.groups %}
+                  tr
+                    td {{each.name}}
+                    td(style="font-family: monospace") {{ each.id|Hex8 }}
+                    td
+                      .btn-group.dropup
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableGroup) Ena
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableGroup) Dis
+                  {% endfor %}

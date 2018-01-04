@@ -16,11 +16,6 @@ from django.http import HttpResponse
 from toolkit import log,readJsonFromCloseCirlce
 
 
-register = template.Library()
-
-@register.filter()
-def range(min=5):
-    return range(min)
 
 
 def index(r,a=None):
