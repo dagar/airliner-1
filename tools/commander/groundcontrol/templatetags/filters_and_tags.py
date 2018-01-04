@@ -19,8 +19,8 @@ def convertToHex(x):
     result = hex(int(x))
     return str(result)
 
-@register.filter(name='Hex8')
+@register.filter(name='hex8')
 def convertTohex8(x):
     # you would need to do any localization of the result here
-    result = hex(int(x)).format()
+    result = hex(int(x))
     return '0x' + result[2:].zfill(8)

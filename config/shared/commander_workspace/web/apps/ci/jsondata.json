@@ -7,7 +7,7 @@
     {"id":7, "activities":[1]},
     {"id":11, "activities":[1]}],
   "groups":[
-    {"name":"SCH_GROUP_CI", "id":0x00000001}]
+    {"name":"SCH_GROUP_CI", "id":1}]
   },
   "eventDef" : {
     "appName":"CI",
