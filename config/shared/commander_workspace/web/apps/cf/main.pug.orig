@@ -129,7 +129,7 @@ block main
                     th Child Task Count
                     td
                      span(data-sage="{'tlm': [{'name': '/CFS/CFE_ES/AppInfo_NumOfChildTasks'}]}") ---
-            .btn-group.dropup(style='margin-top: 10px;')
+            .btn-group.dropup(style="margin-top: 10px;")
               button.btn.btn-primary(data-sage="{'cmd': {'name': '/CFS/CFE_ES/QueryOne', 'argument':[{'name':'Name', 'value':'CF'}]}}") Query
               button.btn.btn-primary(data-sage="{'cmd': {'name': '/CFS/CFE_ES/StartApp', 'argument':[{'name':'Name', 'value':'CF'},{'name':'EntryPoint', 'value':'CF_AppMain'},{'name':'FileName', 'value':'/cf/apps/cf.so'},{'name':'StackSize', 'value':'32768'},{'name':'ExceptionAction', 'value':'0'},{'name':'Priority', 'value':'50'}]}}") Start
               button.btn.btn-primary(data-sage="{'cmd': {'name': '/CFS/CFE_ES/StopApp', 'argument':[{'name':'Name', 'value':'CF'}]}}") Stop
@@ -871,7 +871,7 @@ block main
         groups:[]};
 
     article.col-xs-12.col-sm-12.col-md-12.col-lg-5
-      #wid-CFE-EVS-SCH.jarviswidget.jarviswidget-color-blueDark(style='width: 860px' data-widget-editbutton='false')
+      #wid-CFE-EVS-SCH.jarviswidget.jarviswidget-color-blueDark(style="width: 860px" data-widget-editbutton='false')
         header
           span.widget-icon
             i.fa.fa-table
@@ -885,7 +885,7 @@ block main
               table.table.table-condensed
                 tbody
                   tr
-                    th(style='width: 150px') Cmd Count
+                    th(style="width: 150px") Cmd Count
                     td
                       span(data-sage="{'tlm': [{'name':'/CFS/SCH/CmdCounter'}]}") ---
                   tr
@@ -903,6 +903,7 @@ block main
                     th(style="width: 150px") Action
 
                 tbody
+<<<<<<< HEAD
                   {% for each in obj.schDef.slots %}
                   tr
                     td {{each.id}}
@@ -920,6 +921,34 @@ block main
                   {% endfor %}
 
             {% if obj.schDef.groups %}
+=======
+                  script.
+                    for (var slotIdx = 0; slotIdx < schDef.slots.length; ++slotIdx) {
+                      var slotID = schDef.slots[slotIdx].id;
+                      var strSlotID = '' + slotID;
+                      for (var actIdx = 0; actIdx < schDef.slots[slotIdx].activities.length; ++actIdx){
+                        var actID = schDef.slots[slotIdx].activities[actIdx];
+                        var strActID =  '' + actID;
+                        var entryID = (schDef.entriesPerSlot * slotID) + actID;
+                        var strEntryID = '' + entryID;
+                        var tlmEntryState = {'tlm':[{'name':'/CFS/SCH/EntryState_'+entryID}]};
+                        var tlmMsgID = {'tlm':[{'name':'/CFS/SCH/MsgID_'+entryID}]};
+                        var cmdEnableEntry = {'cmd': {'name':'/CFS/SCH/EnableEntry', 'argument':[{'name':'Slot', 'value':strSlotID},{'name':'Entry', 'value':strActID}]}};
+                        var cmdDisableEntry = {'cmd': {'name':'/CFS/SCH/DisableEntry', 'argument':[{'name':'Slot', 'value':strSlotID},{'name':'Entry', 'value':strActID}]}};
+                      tr
+                        td #{slotID}
+                        td #{strActID}
+                        td
+                          span(data-sage= tlmEntryState) ---
+                        td
+                          span(data-sage= tlmMsgID) ---
+                        td
+                          .btn-group.dropup
+                            button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableEntry) Ena
+                            button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableEntry) Dis
+                      };
+                    };
+>>>>>>> origin/commander
             .table-responsive
               table.table.table-bordered.table-condensed
                 thead
@@ -928,6 +957,7 @@ block main
                     th(style="width: 100px") Group ID
                     th(style="width: 150px") Action
                 tbody
+<<<<<<< HEAD
                   {% for each in obj.schDef.groups %}
                   tr
                     td {{each.name}}
@@ -939,6 +969,23 @@ block main
                   {% endfor %}
               {% endif %}
 
+=======
+                  script.
+                    for (var grpIdx = 0; grpIdx < schDef.groups.length; ++grpIdx) {
+                      var grpName = schDef.groups[grpIdx].'name';
+                      var grpID = schDef.groups[grpIdx].id;
+                      var strGrpID = '0x' + grpID.toString(16);
+                      var cmdEnableGroup = {'cmd': {'name':'/CFS/SCH/EnableGroup', 'argument':[{'name':'Group', 'value':strGrpID}]}};
+                      var cmdDisableGroup = {'cmd': {'name':'/CFS/SCH/DisableGroup', 'argument':[{'name':'Group', 'value':strGrpID}]}};
+                    tr
+                      td #{grpName}
+                      td(style="font-family: monospace") #{strGrpID}
+                      td
+                        .btn-group.dropup
+                          button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableGroup) Ena
+                          button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableGroup) Dis
+                    };
+>>>>>>> origin/commander
   .row
     article.col-xs-12.col-sm-12.col-md-10.col-lg-6(style="width:500px")
       #wid-CF-Events.jarviswidget.jarviswidget-color-blueDark(data-widget-editbutton='false')
@@ -972,25 +1019,25 @@ block main
                     th Event Types
                     td
                   tr
-                    td(style='padding-left: 20px !important') Critical
+                    td(style="padding-left: 20px !important") Critical
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Error
+                    td(style="padding-left: 20px !important")  Error
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Set'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Set'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Info
+                    td(style="padding-left: 20px !important")  Info
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Error', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Debug
+                    td(style="padding-left: 20px !important")  Debug
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Set'},{'name':'Spare', 'value':'0'}]}}") Enable
@@ -1163,6 +1210,7 @@ block main
                         {'name':'CF_QUICK_CMD_EID', 'eventID':160}]
                       };
 
+<<<<<<< HEAD
                   {% for each in obj.eventDef.events %}
                   tr
                     td(style='padding-left: 20px !important') {{each.name}}
@@ -1174,8 +1222,11 @@ block main
                         button.btn.btn-xs.btn-primary(data-sage= cmdDeleteEventFilter) Delete
                   {% endfor %}
 
+=======
+                  
+>>>>>>> origin/commander
 
-    article.col-xs-11.col-sm-6.col-md-5.col-lg-4(style='width:350px')
+    article.col-xs-11.col-sm-6.col-md-5.col-lg-4(style="width:350px")
       #wid-CFE-SB-Memory.jarviswidget.jarviswidget-color-blueDark(data-widget-editbutton='false')
         header
           span.widget-icon
@@ -1236,10 +1287,10 @@ block main
             .table-responsive
               table.table.table-striped.table-condensed.table-memory
                 thead
-                  th(style='width:50px') #
-                  th(style='width:100px') Block Size
-                  th(style='width:75px') Created
-                  th(style='width:75px') Free
+                  th(style="width:50px") #
+                  th(style="width:100px") Block Size
+                  th(style="width:75px") Created
+                  th(style="width:75px") Free
                 tbody
                   tr
                     th 0

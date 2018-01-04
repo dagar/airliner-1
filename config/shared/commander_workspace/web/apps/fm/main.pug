@@ -1,4 +1,5 @@
 {% extends "../../common/layout.pug" %}
+{% load filters_and_tags %}
 
 block header
         i.fa-fw.fa.fa-signal
@@ -883,24 +884,23 @@ block main
                     th MsgID
                     th(style="width: 150px") Action
                 tbody
-                  script.
-                    for (var slotIdx = 0; slotIdx < schDef.slots.length; ++slotIdx) {
-                      var slotID = schDef.slots[slotIdx].id;
-                      var strSlotID = '' + slotID;
-                      for (var actIdx = 0; actIdx < schDef.slots[slotIdx].activities.length; ++actIdx){
-                        var actID = schDef.slots[slotIdx].activities[actIdx];
-                        var strActID =  '' + actID;
-                        var entryID = (schDef.entriesPerSlot * slotID) + actID;
-                        var strEntryID = '' + entryID;
-                        var tlmEntryState = {'tlm':[{'name':'/CFS/SCH/EntryState_'+entryID}]};
-                        var tlmMsgID = {'tlm':[{'name':'/CFS/SCH/MsgID_'+entryID}]};
-                        var cmdEnableEntry = {'cmd': {'name':'/CFS/SCH/EnableEntry', 'argument':[{'name':'Slot', 'value':strSlotID},{'name':'Entry', 'value':strActID}]}};
-                        var cmdDisableEntry = {'cmd': {'name':'/CFS/SCH/DisableEntry', 'argument':[{'name':'Slot', 'value':strSlotID},{'name':'Entry', 'value':strActID}]}};
+                  {% for each in obj.schDef.slots %}
+                  tr
+                    td {{each.id}}
+                    {% for acts in each.activities %}
+                    td {{acts}}
+                    td
+                      span(data-sage="{tlm:[{name:'/CFS/SCH/EntryState_{{obj.schDef.entriesPerSlot|multi:each.id|add:acts}}'}]}") ---
+                    td
+                      span(data-sage="{tlm:[{name:'/CFS/SCH/MsgID_{{obj.schDef.entriesPerSlot|multi:each.id|add:acts}}'}]}") ---
+                    td
+                      .btn-group.dropup
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableEntry) Ena
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableEntry) Dis
+                    {% endfor %}
+                  {% endfor %}
 
-                      };
-                    };
-
-
+            {% if obj.schDef.groups %}
             .table-responsive
               table.table.table-bordered.table-condensed
                 thead
@@ -909,21 +909,16 @@ block main
                     th(style="width: 100px") Group ID
                     th(style="width: 150px") Action
                 tbody
-                  script.
-                    for (var grpIdx = 0; grpIdx < schDef.groups.length; ++grpIdx) {
-                      var grpName = schDef.groups[grpIdx].name;
-                      var grpID = schDef.groups[grpIdx].id;
-                      var strGrpID = '0x' + grpID.toString(16);
-                      var cmdEnableGroup = {'cmd': {'name':'/CFS/SCH/EnableGroup', 'argument':[{'name':'Group', 'value':strGrpID}]}};
-                      var cmdDisableGroup = {'cmd': {'name':'/CFS/SCH/DisableGroup', 'argument':[{'name':'Group', 'value':strGrpID}]}};
-                      tr
-                        td #{grpName}
-                        td(style="font-family: monospace") #{strGrpID}
-                        td
-                          .btn-group.dropup
-                            button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableGroup) Ena
-                            button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableGroup) Dis
-                    };
+                  {% for each in obj.schDef.groups %}
+                  tr
+                    td {{each.name}}
+                    td(style="font-family: monospace") {{ each.id|hex }}
+                    td
+                      .btn-group.dropup
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableGroup) Ena
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableGroup) Dis
+                  {% endfor %}
+              {% endif %}
 
   .row
     article.col-xs-12.col-sm-12.col-md-10.col-lg-6(style="width:500px")
@@ -1094,11 +1089,13 @@ block main
                         {'name':'FM_TABLE_VERIFY', eventID:104}]
                       };
 
-                    for (var idx = 0; idx < eventDef.events.length; ++idx) {
-                      var strEventID = '' + eventDef.events[idx].eventID;
-                      var cmdSetFilter = {'cmd': {'name':'/CFS/CFE_EVS/SetFilter', 'argument':[{'name':'AppName', 'value':eventDef.appName},{'name':'EventID', 'value':strEventID}]}};
-                      var cmdResetFilter = {'cmd': {'name':'/CFS/CFE_EVS/ResetFilter', 'argument':[{'name':'AppName', 'value':eventDef.appName},{'name':'EventID', 'value':strEventID}]}};
-                      var cmdAddEventFilter = {'cmd': {'name':'/CFS/CFE_EVS/AddEventFilter', 'argument':[{'name':'AppName', 'value':eventDef.appName},{'name':'EventID', 'value':strEventID}]}};
-                      var cmdDeleteEventFilter = {'cmd': {'name':'/CFS/CFE_EVS/DeleteEventFilter', 'argument':[{'name':'AppName', 'value':eventDef.appName},{'name':'EventID', 'value':strEventID}]}};
-                      buildHtml();
-                      };
+                  {% for each in obj.eventDef.events %}
+                  tr
+                    td(style='padding-left: 20px !important') {{each.name}}
+                    td
+                      .btn-group
+                        button.btn.btn-xs.btn-primary(data-sage= cmdSetFilter) Set
+                        button.btn.btn-xs.btn-primary(data-sage= cmdResetFilter) Reset
+                        button.btn.btn-xs.btn-primary(data-sage= cmdAddEventFilter) Add
+                        button.btn.btn-xs.btn-primary(data-sage= cmdDeleteEventFilter) Delete
+                  {% endfor %}

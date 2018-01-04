@@ -1,4 +1,5 @@
 {% extends "../../common/layout.pug" %}
+{% load filters_and_tags %}
 
 block header
         i.fa-fw.fa.fa-signal
@@ -214,7 +215,21 @@ block main
                     th MsgID
                     th(style="width: 150px") Action
                 tbody
-
+                  {% for each in obj.schDef.slots %}
+                  {% for acts in each.activities %}
+                  tr
+                    td {{each.id}}
+                    td {{acts}}
+                    td
+                      span(data-sage="{tlm:[{name:'/CFS/SCH/EntryState_{{obj.schDef.entriesPerSlot|multi:each.id|add:acts}}'}]}") ---
+                    td
+                      span(data-sage="{tlm:[{name:'/CFS/SCH/MsgID_{{obj.schDef.entriesPerSlot|multi:each.id|add:acts}}'}]}") ---
+                    td
+                      .btn-group.dropup
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableEntry) Ena
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableEntry) Dis
+                    {% endfor %}
+                  {% endfor %}
             .table-responsive
               table.table.table-bordered.table-condensed
                 thead
@@ -223,21 +238,15 @@ block main
                     th(style="width: 100px") Group ID
                     th(style="width: 150px") Action
                 tbody
-                script.
-                  for (var grpIdx = 0; grpIdx < schDef.groups.length; ++grpIdx) {
-                    var grpName = schDef.groups[grpIdx].name;
-                    var grpID = schDef.groups[grpIdx].id;
-                    var strGrpID = '0x' + grpID.toString(16);
-                    var cmdEnableGroup = {'cmd': {'name':'/CFS/SCH/EnableGroup', 'argument':[{'name':'Group', 'value':strGrpID}]}};
-                    var cmdDisableGroup = {'cmd': {'name':'/CFS/SCH/DisableGroup', 'argument':[{'name':'Group', 'value':strGrpID}]}};
-                    tr
-                      td #{grpName}
-                      td(style="font-family: monospace") #{strGrpID}
-                      td
-                        .btn-group.dropup
-                          button.btn.btn-xs.btn-primary.btn-labeled(data-sage= "cmdEnableGroup") Ena
-                          button.btn.btn-xs.btn-primary.btn-labeled(data-sage= "cmdDisableGroup") Dis
-                  };
+                  {% for each in obj.schDef.groups %}
+                  tr
+                    td {{each.name}}
+                    td(style="font-family: monospace") {{ each.id|hex }}
+                    td
+                      .btn-group.dropup
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableGroup) Ena
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableGroup) Dis
+                  {% endfor %}
   .row
     article.col-xs-12.col-sm-12.col-md-10.col-lg-6(style="width:500px")
       #wid-EA-Events.jarviswidget.jarviswidget-color-blueDark(data-widget-editbutton='false')
@@ -320,7 +329,16 @@ block main
                           {'name':'EA_CMD_RESET_EID', eventID:16}]
                         };
 
-                  
+                    {% for each in obj.eventDef.events %}
+                    tr
+                      td(style='padding-left: 20px !important') {{each.name}}
+                      td
+                        .btn-group
+                          button.btn.btn-xs.btn-primary(data-sage= cmdSetFilter) Set
+                          button.btn.btn-xs.btn-primary(data-sage= cmdResetFilter) Reset
+                          button.btn.btn-xs.btn-primary(data-sage= cmdAddEventFilter) Add
+                          button.btn.btn-xs.btn-primary(data-sage= cmdDeleteEventFilter) Delete
+                    {% endfor %}
 
 
   script.
