@@ -129,7 +129,7 @@ block main
                     th Child Task Count
                     td
                      span(data-sage="{'tlm': [{'name': '/CFS/CFE_ES/AppInfo_NumOfChildTasks'}]}") ---
-            .btn-group.dropup(style='margin-top: 10px;')
+            .btn-group.dropup(style="margin-top: 10px;")
               button.btn.btn-primary(data-sage="{'cmd': {'name': '/CFS/CFE_ES/QueryOne', 'argument':[{'name':'Name', 'value':'CF'}]}}") Query
               button.btn.btn-primary(data-sage="{'cmd': {'name': '/CFS/CFE_ES/StartApp', 'argument':[{'name':'Name', 'value':'CF'},{'name':'EntryPoint', 'value':'CF_AppMain'},{'name':'FileName', 'value':'/cf/apps/cf.so'},{'name':'StackSize', 'value':'32768'},{'name':'ExceptionAction', 'value':'0'},{'name':'Priority', 'value':'50'}]}}") Start
               button.btn.btn-primary(data-sage="{'cmd': {'name': '/CFS/CFE_ES/StopApp', 'argument':[{'name':'Name', 'value':'CF'}]}}") Stop
@@ -871,7 +871,7 @@ block main
         groups:[]};
 
     article.col-xs-12.col-sm-12.col-md-12.col-lg-5
-      #wid-CFE-EVS-SCH.jarviswidget.jarviswidget-color-blueDark(style='width: 860px' data-widget-editbutton='false')
+      #wid-CFE-EVS-SCH.jarviswidget.jarviswidget-color-blueDark(style="width: 860px" data-widget-editbutton='false')
         header
           span.widget-icon
             i.fa.fa-table
@@ -885,7 +885,7 @@ block main
               table.table.table-condensed
                 tbody
                   tr
-                    th(style='width: 150px') Cmd Count
+                    th(style="width: 150px") Cmd Count
                     td
                       span(data-sage="{'tlm': [{'name':'/CFS/SCH/CmdCounter'}]}") ---
                   tr
@@ -972,25 +972,25 @@ block main
                     th Event Types
                     td
                   tr
-                    td(style='padding-left: 20px !important') Critical
+                    td(style="padding-left: 20px !important") Critical
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Error
+                    td(style="padding-left: 20px !important")  Error
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Set'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Set'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Info
+                    td(style="padding-left: 20px !important")  Info
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Error', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Debug
+                    td(style="padding-left: 20px !important")  Debug
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CF'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Set'},{'name':'Spare', 'value':'0'}]}}") Enable
@@ -1236,10 +1236,10 @@ block main
             .table-responsive
               table.table.table-striped.table-condensed.table-memory
                 thead
-                  th(style='width:50px') #
-                  th(style='width:100px') Block Size
-                  th(style='width:75px') Created
-                  th(style='width:75px') Free
+                  th(style="width:50px") #
+                  th(style="width:100px") Block Size
+                  th(style="width:75px") Created
+                  th(style="width:75px") Free
                 tbody
                   tr
                     th 0

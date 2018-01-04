@@ -371,7 +371,7 @@ html(lang='en-us')
 
       window.onhashchange= function(){
         var newInstance = session.getCurrentInstance();
-        //tlm_o.unSubscribe();
+        tlm_o.unSubscribeAll();
         cmd_o.cleanSlate();
         if($("#yamcs-instance-selected").text() != 'Select'){
         page_change_counter = page_change_counter+1;}
