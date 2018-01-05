@@ -1,4 +1,5 @@
 {% extends "../../common/layout.pug" %}
+{% load filters_and_tags %}
 
 block header
         i.fa-fw.fa.fa-signal
@@ -48,19 +49,17 @@ block main
             input.form-control(type='text')
           .widget-body
             #accordion.panel-group.smart-accordion-default
-              script.
-                var i = 0;
-                for (var slot = 0; slot < SLOT_COUNT; ++slot) {
-                 var tabID = '#slot' + slot;
-                 var slotID = 'slot-' + slot;
+              {% with ''|center:200 as range %}
+              {% for _ in range %}
+              tr
                 panel.panel-default
                   .panel-heading
                     h4.panel-title
-                      a.collapsed(data-toggle='collapse' data-parent='#accordion' href="#slot"+slot)
+                      a.collapsed(href="{{ forloop.counter0|idString }}" data-toggle='collapse' )
                         i.fa.fa-lg.fa-angle-down.pull-right
                         i.fa.fa-lg.fa-angle-up.pull-right
-                        | Slot #{slot}
-                  .panel-collapse.collapse(id= "slot"+slot)
+                        | Slot {{ forloop.counter0 }}
+                  .panel-collapse.collapse(id="slot{{ forloop.counter0}}")
                     .panel-body.no-padding
                       table.table.table-bordered.table-condensed.table-striped
                         thead
@@ -70,23 +69,19 @@ block main
                             th MsgID
                             th(style="width: 150px") Action
                         tbody
-                            for (var activity = 0; activity < ENTRIES_PER_SLOT; ++activity) {
-                              var EntryState = '/CFS/SCH/EntryState_' + i
-                              var MsgID = '/CFS/SCH/MsgID_' + i
-                              var strSlot = '' + slot;
-                              var strActivity = '' + activity;
-                              var EnableEntryCmd = {'cmd':{'name':'/CFS/SCH/EnableEntry', 'argument':[{'name':'Slot', 'value':strSlot},{'name':'Entry', 'value':strActivity}]}};
-                              var DisableEntryCmd = {'cmd':{'name':'/CFS/SCH/DisableEntry', 'argument':[{'name':'Slot', 'value':strSlot},{'name':'Entry', 'value':strActivity}]}};
-                            tr
-                              td= activity
-                              td
-                                span(data-sage="{'tlm':[{'name':EntryState}]}") ---
-                              td
-                                span(data-sage="{'tlm':[{'name':MsgID}]}") ---
-                              td
-                                .btn-group.dropup
-                                  button.btn.btn-xs.btn-primary.btn-labeled(data-sage= EnableEntryCmd) Ena
-                                  button.btn.btn-xs.btn-primary.btn-labeled(data-sage= DisableEntryCmd) Dis
-                            i++;
-                          }
-                }
+                          {% with ''|center:5 as range %}
+                          {% for _ in range %}
+                          tr
+                            td {{ forloop.counter0 }}
+                            td
+                              span(data-sage="{'tlm':[{'name':'/CFS/SCH/EntryState_{{ forloop.counter0 }}'}]}") ---
+                            td
+                              span(data-sage="{'tlm':[{'name':'/CFS/SCH/MsgID_{{ forloop.counter0 }}'}]}") ---
+                            td
+                              .btn-group.dropup
+                                button.btn.btn-xs.btn-primary.btn-labeled(data-sage= EnableEntryCmd) Ena
+                                button.btn.btn-xs.btn-primary.btn-labeled(data-sage= DisableEntryCmd) Dis
+                          {% endfor %}
+                          {% endwith %}
+              {% endfor %}
+              {% endwith %}

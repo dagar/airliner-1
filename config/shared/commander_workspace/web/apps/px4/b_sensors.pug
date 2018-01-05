@@ -16,7 +16,7 @@ block main
           div
             .jarviswidget-editbox
               input.form-control(type='text')
-            .widget-body.no-padding
+            .widget-body
               #Magnetometer(style='width:100%; height:300px;')
 
       article.col-xs-10.col-sm-6.col-md-6.col-lg-6(style='max-width:450px')
@@ -28,52 +28,52 @@ block main
           div
             .jarviswidget-editbox
               input.form-control(type='text')
-            .widget-body.no-padding
+            .widget-body
                 table.table.table-hover.table-condensed.table-compressed
                   tbody
                     tr
                       th Error Count:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_ErrorCount"}}) ---
                     tr
                       th X:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_X"}}) ---
                     tr
                       th Y:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_Y"}}) ---
                     tr
                       th Z:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_Z"}}) ---
                     tr
                       th Range:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_Range"}}) ---
                     tr
                       th Scaling:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_Scaling"}}) ---
                     tr
                       th Temp:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_Temp"}}) ---
                     tr
                       th Device ID:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_DeviceID"}}) ---
                     tr
                       th X Raw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_XRaw"}}) ---
                     tr
                       th Y Raw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_YRaw"}}) ---
                     tr
                       th Z Raw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SM_ZRaw"}}) ---
 
     .row.row-fluid
@@ -87,7 +87,7 @@ block main
           div
             .jarviswidget-editbox
               input.form-control(type='text')
-            .widget-body.no-padding
+            .widget-body
               #Accelerometer(style='width:100%; height:300px;')
 
       article.col-xs-10.col-sm-6.col-md-6.col-lg-6(style='max-width:450px')
@@ -99,73 +99,73 @@ block main
           div
             .jarviswidget-editbox
               input.form-control(type='text')
-            .widget-body.no-padding
+            .widget-body
               .table-responsive
                 table.table.table-condensed
                   tbody
                     tr
                       th Integral:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_Integral"}}) ---
                     tr
                       th ErrorCount:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_ErrorCount"}}) ---
                     tr
                       th X:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_X"}}) ---
                     tr
                       th Y:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_Y"}}) ---
                     tr
                       th Z:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_Z"}}) ---
                     tr
                       th XInt:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_XInt"}}) ---
                     tr
                       th YInt:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_YInt"}}) ---
                     tr
                       th ZInt:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_ZInt"}}) ---
                     tr
                       th Temp:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_Temp"}}) ---
                     tr
                       th Range:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_Range"}}) ---
                     tr
                       th Scaling:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_Scaling"}}) ---
                     tr
                       th DeviceID:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_DeviceID"}}) ---
                     tr
                       th XRaw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_XRaw"}}) ---
                     tr
                       th YRaw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_YRaw"}}) ---
                     tr
                       th ZRaw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_ZRaw"}}) ---
                     tr
                       th TempRaw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SA_TempRaw"}}) ---
 
     .row.row-fluid
@@ -179,7 +179,7 @@ block main
           div
             .jarviswidget-editbox
               input.form-control(type='text')
-            .widget-body.no-padding
+            .widget-body
               #Baro(style='width:100%; height:300px;')
 
       article.col-xs-10.col-sm-6.col-md-6.col-lg-6(style='max-width:450px')
@@ -191,25 +191,25 @@ block main
           div
             .jarviswidget-editbox
               input.form-control(type='text')
-            .widget-body.no-padding
+            .widget-body
               .table-responsive
                 table.table.table-condensed
                   tbody
                     tr
                       th Error Count:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SB_ErrorCount"}}) ---
                     tr
                       th Pressure:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SB_Press"}}) ---
                     tr
                       th Altitude:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SB_Alt"}}) ---
                     tr
                       th Temperature:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SB_Temp"}}) ---
 
     .row.row-fluid
@@ -223,7 +223,7 @@ block main
           div
             .jarviswidget-editbox
               input.form-control(type='text')
-            .widget-body.no-padding
+            .widget-body
               #Gyro(style='width:100%; height:300px;')
 
       article.col-xs-10.col-sm-6.col-md-6.col-lg-6(style='max-width:450px')
@@ -235,73 +235,73 @@ block main
           div
             .jarviswidget-editbox
               input.form-control(type='text')
-            .widget-body.no-padding
+            .widget-body
               .table-responsive
                 table.table.table-condensed
                   tbody
                     tr
                       th Integral:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_Integral"}}) ---
                     tr
                       th Error Count:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_ErrorCount"}}) ---
                     tr
                       th X:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_X"}}) ---
                     tr
                       th Y:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_Y"}}) ---
                     tr
                       th Z:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_Z"}}) ---
                     tr
                       th X Int:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_XInt"}}) ---
                     tr
                       th Y Int:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_YInt"}}) ---
                     tr
                       th Z Int:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_ZInt"}}) ---
                     tr
                       th Temp:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_Temp"}}) ---
                     tr
                       th Range:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_Range"}}) ---
                     tr
                       th Scaling:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_Scaling"}}) ---
                     tr
                       th Device ID:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_DeviceID"}}) ---
                     tr
                       th X Raw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_XRaw"}}) ---
                     tr
                       th Y Raw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_YRaw"}}) ---
                     tr
                       th Z Raw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_ZRaw"}}) ---
                     tr
                       th Temp Raw:
-                      td 
+                      td
                         span(data-sage={tlm: {name: "/CFS/PX4/SG_TempRaw"}}) ---
 
     .row.row-fluid
@@ -328,7 +328,7 @@ block main
 
       script.
         var MaxCount = 2500;
-              
+
         loadScript("js/plugin/dygraphs/dygraph-combined.min.js", function () {
             var AccData = [];
             var GyroData = [];
@@ -447,14 +447,14 @@ block main
                 MagCorrelateData();
               });
 
-              session.subscribe({name: '/CFS/PX4/SB_Alt'}, function(param) { 
+              session.subscribe({name: '/CFS/PX4/SB_Alt'}, function(param) {
                     if(AltStarted == false){
                         /* Skip the first one. */
                         AltStarted = true;
-                    } else {          
+                    } else {
                         if (AltData.length >= MaxCount) {
                           AltData = AltData.slice(1);
-                        }  
+                        }
                         AltData.push([AltCount, param.engValue.floatValue]);
                         AltCount++;
                     }
@@ -465,10 +465,10 @@ block main
                       if(AccStarted == false){
                           /* Skip the first one. */
                           AccStarted = true;
-                      } else {        
+                      } else {
                         if (AccData.length >= MaxCount) {
                           AccData = AccData.slice(1);
-                        }            
+                        }
                         AccData.push([AccCount, AccX.value, AccY.value, AccZ.value]);
                         AccCount++;
                       }
@@ -480,10 +480,10 @@ block main
                       if(GyroStarted == false){
                         /* Skip the first one. */
                         GyroStarted = true;
-                      } else {        
+                      } else {
                         if (GyroData.length >= MaxCount) {
                           GyroData = GyroData.slice(1);
-                        }                   
+                        }
                         GyroData.push([GyroCount, GyroX.value, GyroY.value, GyroZ.value]);
                         GyroCount++;
                       }
@@ -495,10 +495,10 @@ block main
                       if(MagStarted == false){
                           /* Skip the first one. */
                           MagStarted = true;
-                      } else {         
+                      } else {
                           if (MagData.length >= MaxCount) {
                               MagData = MagData.slice(1);
-                          }                
+                          }
                           MagData.push([MagCount, MagX.value, MagY.value, MagZ.value]);
                           MagCount++;
                       }
@@ -513,6 +513,3 @@ block main
              }, 100);
           });
         });
-
-
-

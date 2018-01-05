@@ -48,12 +48,12 @@ block main
                     td
                       span(style="font-family: monospace" data-sage="{'tlm':[{'name':'/CFS/MD/DwellEnableMask', 'format':'0x%08x'}]}") ---
             footer
-              button.btn.btn-primary(data-sage="{cmd:{'name':'/CFS/MD/NoOp'}}") No-Op
-              button.btn.btn-primary(data-sage="{cmd:{'name':'/CFS/MD/Reset'}}") Reset Ctrs
-              button.btn.btn-primary(data-sage="{cmd:{'name':'/CFS/MD/StartDwell'}}") Start
-              button.btn.btn-primary(data-sage="{cmd:{'name':'/CFS/MD/StopDwell'}}") Stop
-              button.btn.btn-primary(data-sage="{cmd:{'name':'/CFS/MD/JamDwell'}}") Jam
-              button.btn.btn-primary(data-sage="{cmd:{'name':'/CFS/MD/SetSignature'}}") Set Signature
+              button.btn.btn-primary(data-sage="{'cmd':{'name':'/CFS/MD/NoOp'}}") No-Op
+              button.btn.btn-primary(data-sage="{'cmd':{'name':'/CFS/MD/Reset'}}") Reset Ctrs
+              button.btn.btn-primary(data-sage="{'cmd':{'name':'/CFS/MD/StartDwell'}}") Start
+              button.btn.btn-primary(data-sage="{'cmd':{'name':'/CFS/MD/StopDwell'}}") Stop
+              button.btn.btn-primary(data-sage="{'cmd':{'name':'/CFS/MD/JamDwell'}}") Jam
+              button.btn.btn-primary(data-sage="{'cmd':{'name':'/CFS/MD/SetSignature'}}") Set Signature
 
     article.col-xs-12.col-sm-12.col-md-6.col-lg-5
       #wid-md-stats.jarviswidget.jarviswidget-color-blueDark(data-widget-editbutton='false')
@@ -76,3 +76,21 @@ block main
                     th(style="width:100px; overflow:hidden") Pkt Offset
                     th(style="width:100px; overflow:hidden") Tbl Entry
                     th(style="width:100px; overflow:hidden") Countdown
+                  {% with ''|center:4 as range %}
+                  {% for _ in range %}
+                  tr
+                    th {{ forloop.counter0|add:"0"}}
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/MD/DwellTblAddrCount{{ forloop.counter0 }}'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/MD/NumWaitsPerPkt{{ forloop.counter0 }}'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/MD/ByteCount{{ forloop.counter0 }}'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/MD/DwellPktOffset{{ forloop.counter0 }}'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/MD/DwellTblEntry{{ forloop.counter0 }}'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/MD/Countdown{{ forloop.counter0 }}'}]}") ---
+                  {% endfor %}
+                  {% endwith %}

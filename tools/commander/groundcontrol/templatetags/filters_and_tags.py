@@ -24,3 +24,9 @@ def convertTohex8(x):
     # you would need to do any localization of the result here
     result = hex(int(x))
     return '0x' + result[2:].zfill(8)
+
+@register.filter(name='idString')
+def makesStringAnId(x):
+    # you would need to do any localization of the result here
+    result = '#slot' + str(x)
+    return result
