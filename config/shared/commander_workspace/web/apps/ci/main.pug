@@ -62,10 +62,10 @@ block main
                 table.table.table-condensed
                   tbody
                     tr
-                      th(style={width:'170px'}) Cmd Count
-                      td(style={width:'150px'})
+                      th(style="width:170px") Cmd Count
+                      td(style="width:150px")
                         span(data-sage="{'tlm':[{'name':'/CFS/CFE_TBL/CmdCounter'}]}") ---
-                      td(style={width:'80px'})
+                      td(style="width:80px")
                     tr
                       th Cmd Error Count
                       td
@@ -154,7 +154,7 @@ block main
                   button.btn.btn-xs.btn-primary.btn-labeled.sage-cmd-inline(data-sage="{'cmd': {'name': '/CFS/CFE_TBL/Dump', 'argument':[{'name':'TableName', 'value':'CI.TIMEOUT_TBL'}]}}") Dump Timeout
                   button.btn.btn-xs.btn-primary.btn-labeled.sage-cmd-inline(data-sage="{'cmd': {'name': '/CFS/CFE_TBL/TlmReg', 'argument':[{'name':'TableName', 'value':'CI.TIMEOUT_TBL'}]}}") Tlm Timeout Reg
 
-    article.col-xs-12.col-sm-12.col-md-6.col-lg-3(style={width:'500px'})
+    article.col-xs-12.col-sm-12.col-md-6.col-lg-3(style="width:500px")
       #wid-CFE-ES-AppCtrl-ApplicationControl.jarviswidget.jarviswidget-color-blueDark(data-widget-editbutton='false')
         header
           span.widget-icon
@@ -328,7 +328,8 @@ block main
                   tr
                     td {{each.name}}
                     td(style="font-family: monospace") {{ each.id|hex8 }}
-                    td .btn-group.dropup
+                    td
+                      .btn-group.dropup
                         button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableGroup) Ena
                         button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableGroup) Dis
                   {% endfor %}

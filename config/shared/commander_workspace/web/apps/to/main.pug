@@ -1,4 +1,5 @@
 {% extends "../../common/layout.pug" %}
+{% load filters_and_tags %}
 
 block header
         i.fa-fw.fa.fa-signal
@@ -175,21 +176,22 @@ block main
                   th(style="width:75px") Dropped Msgs
                   th(style="width:75px") Queued Msgs
                 tbody
-                  script.
-                    for (var i = 0; i < MFLOW_COUNT; ++i) {
-                    tr
-                      th= i
+                  {% with ''|center:50 as range %}
+                  {% for _ in range %}
+                  tr
+                    th {{ forloop.counter0 }}
+                    td
+                      span(data-sage={tlm:[{name:'/CFS/TO/MF{{ forloop.counter0 }}_MsgId'}]}) ---
                       td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/MF'+i+'_MsgId'}]}") ---
+                        span(data-sage={tlm:[{name:'/CFS/TO/MF{{ forloop.counter0 }}_MsgLimit'}]}) ---
                       td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/MF'+i+'_MsgLimit'}]}") ---
+                        span(data-sage={tlm:[{name:'/CFS/TO/MF{{ forloop.counter0 }}_PqueueID'}]}) ---
                       td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/MF'+i+'_PqueueID'}]}") ---
+                        span(data-sage={tlm:[{name:'/CFS/TO/MF{{ forloop.counter0 }}_DroppedMsgCnt'}]}) ---
                       td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/MF'+i+'_DroppedMsgCnt'}]}") ---
-                      td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/MF'+i+'_QueuedMsgCnt'}]}") ---
-                    }
+                        span(data-sage={tlm:[{name:'/CFS/TO/MF{{ forloop.counter0 }}_QueuedMsgCnt'}]}) ---
+                  {% endfor %}
+                  {% endwith %}
             .table-responsive
               table.table.table-striped.table-condensed.table-memory
                 thead
@@ -202,25 +204,26 @@ block main
                   th(style="width:75px") Current Queued
                   th(style="width:75px") Highwater
                 tbody
-                  script.
-                    for (var i = 0; i < PQUEUE_COUNT; ++i) {
-                    tr
-                      th= i
-                      td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ'+i+'_State'}]}") ---
-                      td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ'+i+'_MsgLimit'}]}") ---
-                      td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ'+i+'_Qtype'}]}") ---
-                      td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ'+i+'_DroppedMsgCnt'}]}") ---
-                      td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ'+i+'_QueuedMsgCnt'}]}") ---
-                      td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ'+i+'_CurrentlyQueuedCnt'}]}") ---
-                      td
-                        span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ'+i+'_HighwaterMark'}]}") ---
-                  }
+                  {% with ''|center:10 as range %}
+                  {% for _ in range %}
+                  tr
+                    th {{ forloop.counter0 }}
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ{{ forloop.counter0 }}_State'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ{{ forloop.counter0 }}_MsgLimit'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ{{ forloop.counter0 }}_Qtype'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ{{ forloop.counter0 }}_DroppedMsgCnt'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ{{ forloop.counter0 }}_QueuedMsgCnt'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ{{ forloop.counter0 }}_CurrentlyQueuedCnt'}]}") ---
+                    td
+                      span(data-sage="{'tlm':[{'name':'/CFS/TO/PQ{{ forloop.counter0 }}_HighwaterMark'}]}") ---
+                  {% endfor %}
+                  {% endwith %}
             .table-responsive
               table.table.table-condensed
                 tbody
@@ -529,7 +532,7 @@ block main
       var schDef = {
         slotCount:200,
         entriesPerSlot:5,
-        app'name':'TO',
+        appName:'TO',
         slots:[
           {id:1, activities:[1]},
           {id:21, activities:[1]},
@@ -577,32 +580,21 @@ block main
                     th MsgID
                     th(style="width: 150px") Action
                 tbody
-                  script.
-                    for (var slotIdx = 0; slotIdx < schDef.slots.length; ++slotIdx) {
-                      var slotID = schDef.slots[slotIdx].id;
-                      var strSlotID = '' + slotID;
-                      for (var actIdx = 0; actIdx < schDef.slots[slotIdx].activities.length; ++actIdx){
-                        var actID = schDef.slots[slotIdx].activities[actIdx];
-                        var strActID =  '' + actID;
-                        var entryID = (schDef.entriesPerSlot * slotID) + actID;
-                        var strEntryID = '' + entryID;
-                        var tlmEntryState = {'tlm':[{'name':'/CFS/SCH/EntryState_'+entryID}]};
-                        var tlmMsgID = {'tlm':[{'name':'/CFS/SCH/MsgID_'+entryID}]};
-                        var cmdEnableEntry = {'cmd': {'name':'/CFS/SCH/EnableEntry', 'argument':[{'name':'Slot', 'value':strSlotID},{'name':'Entry', 'value':strActID}]}};
-                        var cmdDisableEntry = {'cmd': {'name':'/CFS/SCH/DisableEntry', 'argument':[{'name':'Slot', 'value':strSlotID},{'name':'Entry', 'value':strActID}]}};
-                      tr
-                        td #{slotID}
-                        td #{strActID}
-                        td
-                          span(data-sage= tlmEntryState) ---
-                        td
-                          span(data-sage= tlmMsgID) ---
-                        td
-                          .btn-group.dropup
-                            button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableEntry) Ena
-                            button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableEntry) Dis
-                      };
-                    };
+                  {% for each in obj.schDef.slots %}
+                  tr
+                    td {{each.id}}
+                    {% for acts in each.activities %}
+                    td {{acts}}
+                    td
+                      span(data-sage="{tlm:[{name:'/CFS/SCH/EntryState_{{obj.schDef.entriesPerSlot|multi:each.id|add:acts}}'}]}") ---
+                    td
+                      span(data-sage="{tlm:[{name:'/CFS/SCH/MsgID_{{obj.schDef.entriesPerSlot|multi:each.id|add:acts}}'}]}") ---
+                    td
+                      .btn-group.dropup
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableEntry) Ena
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableEntry) Dis
+                    {% endfor %}
+                  {% endfor %}
             .table-responsive
               table.table.table-bordered.table-condensed
                 thead
@@ -611,21 +603,15 @@ block main
                     th(style="width: 100px") Group ID
                     th(style="width: 150px") Action
                 tbody
-                  script.
-                    for (var grpIdx = 0; grpIdx < schDef.groups.length; ++grpIdx) {
-                      var grpName = schDef.groups[grpIdx].name;
-                      var grpID = schDef.groups[grpIdx].id;
-                      var strGrpID = '0x' + grpID.toString(16);
-                      var cmdEnableGroup = {'cmd': {'name':'/CFS/SCH/EnableGroup', 'argument':[{'name':'Group', 'value':strGrpID}]}};
-                      var cmdDisableGroup = {'cmd': {'name':'/CFS/SCH/DisableGroup', 'argument':[{'name':'Group', 'value':strGrpID}]}};
-                      tr
-                        td #{grpName}
-                        td(style='font-family: monospace') #{strGrpID}
-                        td
-                          .btn-group.dropup
-                            button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableGroup) Ena
-                            button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableGroup) Dis
-                    };
+                  {% for each in obj.schDef.groups %}
+                  tr
+                    td {{each.name}}
+                    td(style="font-family: monospace") {{ each.id|hex }}
+                    td
+                      .btn-group.dropup
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdEnableGroup) Ena
+                        button.btn.btn-xs.btn-primary.btn-labeled(data-sage= cmdDisableGroup) Dis
+                  {% endfor %}
 
   .row
     article.col-xs-12.col-sm-12.col-md-10.col-lg-6(style="width:500px")
@@ -686,3 +672,40 @@ block main
                   tr
                     th Event IDs
                     td
+                  {% for each in obj.eventDef.events %}
+                  tr
+                    td(style='padding-left: 20px !important') {{each.name}}
+                    td
+                      .btn-group
+                        button.btn.btn-xs.btn-primary(data-sage= cmdSetFilter) Set
+                        button.btn.btn-xs.btn-primary(data-sage= cmdResetFilter) Reset
+                        button.btn.btn-xs.btn-primary(data-sage= cmdAddEventFilter) Add
+                        button.btn.btn-xs.btn-primary(data-sage= cmdDeleteEventFilter) Delete
+                  {% endfor %}
+                  
+block scripts
+script.
+
+  Handlebars.registerHelper('toHex16', function(context) {
+    return sprintf("0x%04x", context);
+  });
+
+  function UpdatePoolHandleColors() {
+    if($('#/CFS/TO/MemPoolHandle').text() === $('#CFE_ES_PoolStats_Handle').text())
+    {
+        $('#/CFS/TO/MemPoolHandle').css({'color':'green'});
+        $('#CFE_ES_PoolStats_Handle').css({'color':'green'});
+    }
+    else
+    {
+        $('#/CFS/TO/MemPoolHandle').css({'color':'red'});
+        $('#CFE_ES_PoolStats_Handle').css({'color':'red'});
+    }
+  }
+
+var SendMemoryPoolStats = function() {
+  session.sendCommand('/CFS/CFE_ES/TlmPoolStats', [
+    {name:'Application', value:'TO'},
+    {name:'PoolHandle', value:parseInt($('#TO_MemPoolHandle').text()).toString()}
+  ]);
+}

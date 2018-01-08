@@ -164,22 +164,22 @@ block main
                   tr
                     th EEPROM Baseline
                     td
-                      span(style='font-family: monospace' data-sage="{'tlm':[{'name':'/CFS/CS/EepromBaseline', 'format':'0x%08x'}]}") ---
+                      span(style="font-family: monospace" data-sage="{'tlm':[{'name':'/CFS/CS/EepromBaseline', 'format':'0x%08x'}]}") ---
                     td
                   tr
                     th OS Baseline
                     td
-                      span(style='font-family: monospace' data-sage="{'tlm':[{'name':'/CFS/CS/OSBaseline', 'format':'0x%08x'}]}") ---
+                      span(style="font-family: monospace" data-sage="{'tlm':[{'name':'/CFS/CS/OSBaseline', 'format':'0x%08x'}]}") ---
                     td
                   tr
                     th CFE Core Baseline
                     td
-                      span(style='font-family: monospace' data-sage="{'tlm':[{'name':'/CFS/CS/CfeCoreBaseline', 'format':'0x%08x'}]}") ---
+                      span(style="font-family: monospace" data-sage="{'tlm':[{'name':'/CFS/CS/CfeCoreBaseline', 'format':'0x%08x'}]}") ---
                     td
                   tr
                     th Last One Shot Address
                     td
-                      span(style='font-family: monospace' data-sage="{'tlm':[{'name':'/CFS/CS/LastOneShotAddress', 'format':'0x%08x'}]}") ---
+                      span(style="font-family: monospace" data-sage="{'tlm':[{'name':'/CFS/CS/LastOneShotAddress', 'format':'0x%08x'}]}") ---
                     td
                   tr
                     th Last One Shot Size
@@ -189,7 +189,7 @@ block main
                   tr
                     th Last One Shot Checksum
                     td
-                      span(style='font-family: monospace' data-sage="{'tlm':[{'name':'/CFS/CS/LastOneShotChecksum', 'format':'0x%08x'}]}") ---
+                      span(style="font-family: monospace" data-sage="{'tlm':[{'name':'/CFS/CS/LastOneShotChecksum', 'format':'0x%08x'}]}") ---
                     td
                   tr
                     th Pass Count
@@ -238,25 +238,25 @@ block main
                     th Event Types
                     td
                   tr
-                    td(style='padding-left: 20px !important') Critical
+                    td(style="padding-left: 20px !important") Critical
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CS'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'CS'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Error
+                    td(style="padding-left: 20px !important")  Error
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CS'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Set'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'CS'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Set'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Info
+                    td(style="padding-left: 20px !important")  Info
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CS'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Error', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'CS'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Debug
+                    td(style="padding-left: 20px !important")  Debug
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'CS'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Set'},{'name':'Spare', 'value':'0'}]}}") Enable
@@ -426,7 +426,7 @@ block main
                     name = eventDef.events[e]['name'];
                     id = eventDef.events[e]['eventID'];
 
-                    var txt = "<td  style='padding-left: 20px !important'>"+name+"</td>" +
+                    var txt = "<td  style="padding-left: 20px !important">"+name+"</td>" +
                     "<td>"+
                     "<div class = 'btn-group'>"+
                     "<button data-sage = \"{'cmd': {'name':'/CFS/CFE_EVS/SetFilter', 'argument':[{'name':'AppName', 'value':'"+name+"'},{'name':'EventID', 'value':"+id+" }]}}\" class = 'btn btn-xs btn-primary'>Set</button>"+

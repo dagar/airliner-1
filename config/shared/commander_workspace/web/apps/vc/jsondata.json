@@ -1,0 +1,36 @@
+{
+  "schDef" : {
+  "slotCount":200,
+  "entriesPerSlot":5,
+  "appName":"VC",
+  "slots":[
+    {"id":104, "activities":[1]},
+    {"id":105, "activities":[1]}],
+  "groups":[
+    {"name":"SCH_GROUP_VC", "id":33554432}]
+  },
+  "eventDef": {
+    "appName":"VC",
+    "events":[
+      {"name":"VC_INF_EID", "eventID":1},
+      {"name":"VC_INIT_INF_EID", "eventID":2},
+      {"name":"VC_CONFIG_TABLE_INF_EID", "eventID":3},
+      {"name":"VC_NOOP_INF_EID", "eventID":4},
+      {"name":"VC_RESET_INF_EID", "eventID":5},
+      {"name":"VC_CMD_INF_EID", "eventID":6},
+      {"name":"VC_DEV_INF_EID", "eventID":7},
+      {"name":"VC_CHA_INF_EID", "eventID":8},
+      {"name":"VC_ERR_EID", "eventID":9},
+      {"name":"VC_INIT_ERR_EID", "eventID":10},
+      {"name":"VC_UNINIT_ERR_EID", "eventID":11},
+      {"name":"VC_CONFIG_TABLE_ERR_EID", "eventID":12},
+      {"name":"VC_CMD_ERR_EID", "eventID":13},
+      {"name":"VC_PIPE_ERR_EID", "eventID":14},
+      {"name":"VC_MSGID_ERR_EID", "eventID":15},
+      {"name":"VC_MSGLEN_ERR_EID", "eventID":16},
+      {"name":"VC_SOCKET_ERR_EID", "eventID":17},
+      {"name":"VC_DEVICE_ERR_EID", "eventID":18},
+      {"name":"VC_ADDR_ERR_EID", "eventID":19},
+      {"name":"VC_ADDR_NUL_ERR_EID", "eventID":20}]
+    }
+}

@@ -527,7 +527,7 @@ block main
               table.table.table-condensed
                 tbody
                   tr
-                    th(style={width:'150px'})  Status
+                    th(style="width:150px")  Status
                     td
                       span(data-sage="{'tlm':[{'name':'/CFS/FM/Status'}]}") ---
                   tr
@@ -551,7 +551,7 @@ block main
                     td
                       span(data-sage="{'tlm':[{'name':'/CFS/FM/Name'}]}") ---
 
-    article.col-xs-12.col-sm-12.col-md-6.col-lg-3(style={width:'600px'})
+    article.col-xs-12.col-sm-12.col-md-6.col-lg-3(style="width:600px")
       #wid-FM-DirList.jarviswidget.jarviswidget-color-blueDark(data-widget-editbutton='false')
         header
           span.widget-icon
@@ -559,8 +559,8 @@ block main
           h2
             table
               tr
-                td(style={width:'100px'}) Directory List
-                td(style={width:'200px'})
+                td(style="width:100px") Directory List
+                td(style="width:200px")
                   .btn-group
                     button.btn.btn-xs.btn-primary.btn-labeled(data-sage="{'cmd':{'name':'/CFS/FM/GetDirFile'}}") Get Dir File
                     button.btn.btn-xs.btn-primary.btn-labeled(data-sage="{'cmd':{'name':'/CFS/FM/GetDirPkt'}}") Get Dir Pkt
@@ -572,7 +572,7 @@ block main
               table.table.table-condensed
                 tbody
                   tr
-                    th(style={width:'150px'})  Directory Name
+                    th(style="width:150px")  Directory Name
                     td
                       span(data-sage="{'tlm':[{'name':'/CFS/FM/DirName'}]}") ---
                   tr
@@ -953,19 +953,19 @@ block main
                     th Event Types
                     td
                   tr
-                    td(style='padding-left: 20px !important') Critical
+                    td(style="padding-left: 20px !important") Critical
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'FM'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'FM'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Error
+                    td(style="padding-left: 20px !important")  Error
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'FM'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Set'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/DisableAppEventType', 'argument':[{'name':'AppName', 'value':'FM'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Set'},{'name':'Information', 'value':'Ignored'},{'name':'Debug', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Disable
                   tr
-                    td(style='padding-left: 20px !important')  Info
+                    td(style="padding-left: 20px !important")  Info
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage="{'cmd': {'name':'/CFS/CFE_EVS/EnableAppEventType', 'argument':[{'name':'AppName', 'value':'FM'},{'name':'Critical', 'value':'Ignored'},{'name':'Error', 'value':'Ignored'},{'name':'Information', 'value':'Set'},{'name':'Error', 'value':'Ignored'},{'name':'Spare', 'value':'0'}]}}") Enable
@@ -1091,7 +1091,7 @@ block main
 
                   {% for each in obj.eventDef.events %}
                   tr
-                    td(style='padding-left: 20px !important') {{each.name}}
+                    td(style="padding-left: 20px !important") {{each.name}}
                     td
                       .btn-group
                         button.btn.btn-xs.btn-primary(data-sage= cmdSetFilter) Set
