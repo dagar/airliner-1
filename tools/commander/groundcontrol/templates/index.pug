@@ -38,14 +38,15 @@ html(lang='en-us')
     link(rel='apple-touch-startup-image', href='static/img/splash/iphone.png', media='screen and (max-device-width: 320px)')
     link(rel='stylesheet', type='text/css', href='static/bower_components/jquery-flight-indicators/css/flightindicators.css')
     script(src='toolkit.js)
-    script(src='client.js')
+    script(src='client2.js')
 
     script.
+       var sm = new Session_Maintainance();
        var session = new Session();
        var inst = new Instance();
        var dir =  new Directory();
        var cmd_o = new Command();
-       var tlm_o = new Telemetry();
+       //var tlm_o = new Telemetry();
        var ev = new Event();
        //var adsb_o = new ADSB();
        var page_change_counter=0;
@@ -350,8 +351,8 @@ html(lang='en-us')
 
       window.onload= function(){
         cmd_o.cleanSlate();
-        //tlm_o = new Telemetry(); //idk if this line is needed.
-        session.saveSockets([inst,dir,cmd_o,tlm_o,ev]);
+        //sm = new Telemetry(); //idk if this line is needed.
+        session.saveSockets([inst,dir,cmd_o,sm,ev]);
       };
 
 
@@ -359,8 +360,8 @@ html(lang='en-us')
       /*This event happens just before the page is closed or unloaded*/
 
       window.onbeforeunload = function () {
-       tlm_o.unSubscribeAll();
-       tlm_o.killAll();
+       sm.unSubscribeAll();
+       sm.killAll();
        ev.kill();
       };
 
@@ -371,7 +372,7 @@ html(lang='en-us')
 
       window.onhashchange= function(){
         var newInstance = session.getCurrentInstance();
-        //tlm_o.unSubscribe();
+        //sm.unSubscribe();
         cmd_o.cleanSlate();
         if($("#yamcs-instance-selected").text() != 'Select'){
         page_change_counter = page_change_counter+1;}
@@ -402,7 +403,8 @@ html(lang='en-us')
                     var newInstance = session.getCurrentInstance();
                     page_change_counter=0;
                     $("#yamcs-instance-selected").text(newInstance);
-                    inst.transmitCurrentInstance(newInstance);
+                    sm.transmitCurrentInstance(newInstance);
+                    sleep(100);// TODO: instance name is not written onto the messages when this step is executed there for a significant delay added
                     BindHtmlToCommanderInstance(newInstance); //first time binding
 
 
@@ -604,7 +606,7 @@ html(lang='en-us')
         if (found == false) {
 
           //console.log(param.id.name);
-          tlm_o.unSubscribeTelemetry({'tlm':[{'name':param.id.name}]});
+          sm.unSubscribeTelemetry({'tlm':[{'name':param.id.name}]});
 
 
         }
@@ -622,7 +624,7 @@ html(lang='en-us')
 
 
       var BindHtmlToCommanderInstance = function (instanceName) {
-
+        //sleep(1000);
 
         var tlm = [];
         var self = this;
@@ -631,7 +633,7 @@ html(lang='en-us')
         if(page_change_counter>=1){
 
             console.log('called all unsubscription');
-            //tlm_o.unSubscribeAll2();
+            //sm.unSubscribeAll2();
 
 
         }
@@ -668,7 +670,7 @@ html(lang='en-us')
 
           if (jsonObj.hasOwnProperty('tlm')) {
             /* This is a telemetry object. */
-            tlm_o.subscribeTelemetry(jsonObj,processTelemetryUpdate);
+            sm.subscribeTelemetry(jsonObj,processTelemetryUpdate);
             CommanderTlmDataElements.push($(this));
           }
 

@@ -92,7 +92,7 @@ def log(name,status,status_type):
 
 
 
-def preProcess(d):
+def preProcess(d,instance):
     """!
     Processes only certain strings, this is to compensate for the syntax differences between javascript and python code.
     @param d: text
@@ -108,10 +108,7 @@ def preProcess(d):
         x = array_obj[3]["data"]
         x1 = x['parameter']
         for i in range(len(x1)):
-            if r.get('instance')=='None':
-                x['parameter'][i]['instance']=r.get('default_instance')
-            else:
-                x['parameter'][i]['instance'] = r.get('instance')
+            x['parameter'][i]['instance'] = instance
         return str(x)
 
 

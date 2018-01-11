@@ -5,32 +5,145 @@ passing the message as parameter. The response is written in the received messag
 
 ## swiss-knife
 import toolkit as tk
+from logger import *
 import urllib,json,os,psutil,requests,time,socket,base64,ast
 from channels import Group
+from channels.generic import BaseConsumer
+from channels.sessions import channel_session
 from websocket import create_connection
 from multiprocessing import Process
+from pprint import pprint
+import inspect
+import time
 ## datastores
 import redis,sqlite3
 
 
 redis_cache = redis.StrictRedis(host='localhost', port=6379, db=0)## Initialize redis caching database
 
-
-
-print '***********',redis_cache
 mode = 2#int(redis_cache.get('mode'))## Initialize mode defined in launch_config.json
-test_db_path = redis_cache.get('app_path')## Initialize test database path defined in launch_config.json
+app_path = redis_cache.get('app_path')## Initialize test database path defined in launch_config.json
 number_of_workers = redis_cache.get('number_of_workers')## Initialize number or parallel workers defined in launch_config.json
-defaultInstance= redis_cache.get('instance')## Initialize default instance defined in launch_config.json
-address = redis_cache.get('address')## Initialize address to pyliner/yamcs defined in launch_config.json
-port = redis_cache.get('port')## Initialize port to pyliner/yamcs defined in launch_config.json
+defaultInstance= 'softsim'#redis_cache.get('default_instance')## Initialize default instance defined in launch_config.json
+address = '127.0.0.1'#redis_cache.get('address')## Initialize address to pyliner/yamcs defined in launch_config.json
+port = 8090#redis_cache.get('port')## Initialize port to pyliner/yamcs defined in launch_config.json
+video_socket = None## An empty variable which will be later used to store the video-udp socket object.
+video_port = 3001#int(redis_cache.get('video_port'))## Initialize video port to pyliner/yamcs defined in launch_config.json.
+
 sock_map = {}## A dictionary to store websockets which connect backend, mapped with unique id in message object.
 proc_map = {}## A dictionary to store processes which push telemetry to frontend, mapped with unique id in message object.
 test_sampling_frequency = (1.0/10)## The number of samples collected everytime the `push` function yields data
 sock_map_e = {}## A dictionary to store websockets which connect backend, mapped with unique id in message object.
 proc_map_e = {}## A dictionary to store processes which push telemetry to frontend, mapped with unique id in message object.
-video_socket = None## An empty variable which will be later used to store the video-udp socket object.
-video_port = 3001##int(redis_cache.get('video_port'))## Initialize video port to pyliner/yamcs defined in launch_config.json.
+
+
+
+
+class session_maintainance(BaseConsumer):
+    sock_map = {}  ## A dictionary to store websockets which connect backend, mapped with unique id in message object.
+    proc_map = {}  ## A dictionary to store processes which push telemetry to frontend, mapped with unique id in message object.
+    r = redis.StrictRedis(host='localhost', port=6379, db=0)
+    channel_session = True
+    method_mapping = {
+        u'websocket.connect': "connect",
+        u'websocket.disconnect': "disconnect",
+        u'websocket.receive': "recv_handle",
+    }
+
+    def connect(self,message):
+        message.reply_channel.send({'accept': True})
+        logi('Connected to session maintainance instance.')
+
+    def disconnect(self,message):
+        message.reply_channel.send({'close': True})
+        pprint(message.__dict__)
+
+    def recv_handle(self,message):
+        client_reply_channel = message.content['reply_channel']
+        obj = tk.byteify(json.loads(message.content['text']))
+
+        if  obj['op'] == 'bind_instance':
+            # check if client is already in the broadcast group
+            if client_reply_channel not in Group(obj['msg']).channel_layer.group_channels(obj['msg']):
+                message.channel_session['instance'] = obj['msg']
+                Group(obj['msg']).add(message.reply_channel)
+                logd('client %s has been added to broadcast group of %s.',client_reply_channel,obj['msg'])
+            else:
+                logw('Client %s already bound to broadcast group %s',client_reply_channel,obj['msg'])
+        elif obj['op'] == 'subscribe_tlm' :
+            tlm_obj = json.loads(obj['msg'])
+
+            my_instance = str(message.channel_session['instance'])
+            deserialized = json.loads(self.r.get('activeSubscriptions'))
+            if my_instance not in deserialized.keys():
+                deserialized[my_instance] = []
+            if tlm_obj['tlm'] not in deserialized[my_instance]:
+                print Group(obj['msg']).channel_layer.group_channels(obj['msg'])
+                deserialized[my_instance].append(tlm_obj['tlm'])
+                self.r.set('activeSubscriptions',json.dumps(deserialized))
+                temp = '{"parameter":"subscribe", "data":{"list":' + str(tk.byteify(tlm_obj['tlm'])) + '}}'
+                temp = temp.replace("\'", "\"")
+                to_send = '[1,1,0,' + str(temp) + ']'
+                if client_reply_channel not in sock_map.keys():
+                    try:
+                        ws = create_connection('ws://' + str(address) + ':' + str(port) + '/' + my_instance + '/_websocket')
+                        sock_map[client_reply_channel] = ws
+                        sock_map[client_reply_channel].send(to_send)
+                        process = Process(target=self.push,args=(sock_map[client_reply_channel],my_instance,client_reply_channel))
+                        process.start()
+                        proc_map[client_reply_channel] = process.pid
+                        logd('New push process has been created with pid %s.',str(process.pid))
+                    except Exception, err:
+                        loge('Encountered error while creating a process. Error: %s',err)
+                        pass
+                else:
+                    try:
+                        sock_map[client_reply_channel].send(to_send)
+                        logd('Client %s is now subscribed to %s bound to instance %s',client_reply_channel,obj['msg'],message.channel_session['instance'])
+                    except Exception, err:
+                        ## TODO: safely log error, unit test required
+                        loge('Subscription error occured for client %s on item %s for instance %s. Error: %s',client_reply_channel,obj['msg'],message.channel_session['instance'],err)
+                        pass
+            else:
+                logw('No need subscription for client %s on item %s for instance %s',client_reply_channel,obj['msg'],message.channel_session['instance'])
+        elif obj['op'] == 'unsubscribe_tlm':
+            tlm_obj = json.loads(obj['msg'])
+            print Group(obj['msg']).channel_layer.group_channels(obj['msg'])
+            my_instance = str(message.channel_session['instance'])
+            deserialized = json.loads(self.r.get('activeSubscriptions'))
+
+            temp = '{"parameter":"unsubscribe", "data":{"list":' + str(tk.byteify(tlm_obj['tlm'])) + '}}'
+            temp = temp.replace("\'", "\"")
+            to_send = '[1,1,0,' + str(temp) + ']'
+            ## sending unsubscribe signal to pyliner/yamcs
+            sock_map[client_reply_channel].send(to_send)
+        elif obj['op']=='kill_all_tlm':
+            print 'lol'
+
+
+
+    def push(self,websocket_obj,inst_name,id):
+        """!
+        A non-busy forever loop pushes telemetry to client.
+        @param websocket_obj:  websocket object
+        @return: void
+        """
+        while True:
+            try:
+                result = websocket_obj.recv()
+                ## If result is not a ACK signal, in YAMCS case ACK looks like `[1,2,x]`
+                if result != '[1,2,0]':
+                    result2 = tk.preProcess(result,inst_name)
+                    """INTROSPECTION PURPOSE ONLY"""
+                    #e_list = json.loads(json.dumps(ast.literal_eval(result2)))
+                    #for e in e_list['parameter']:
+                    #    print websocket_obj,'---------------',id,'-------------------',e['id']['name']
+                    Group(inst_name).send({'text': result2})
+            except Exception, err:
+                loge('Push error occured while trying to push messages to client. Error %s',err)
+                break
+            ## avoids busy-while-loop
+            time.sleep(0.01)
 
 
 
@@ -45,7 +158,6 @@ def tlm_connect( message):
     Feedback = json.dumps("OK")
     message.reply_channel.send({'accept': True, 'text':Feedback})
     tk.log('Instance', 'Connected.', 'INFO')
-
 def tlm_disconnect( message):
     """!
     Accepts disconnection message and disconnects with client.
@@ -56,9 +168,6 @@ def tlm_disconnect( message):
     message.reply_channel.send({'close': True, 'text':Feedback})
     Group('tlm_bc').discard(message.reply_channel)
     tk.log('Instance', '(Dis)connected.', 'INFO')
-
-
-
 def getTelemetry( message):
     """!
     Takes the telemetry message object and either sends a subscribe or unsubscribe signal to pyliner/yamcs.
@@ -145,7 +254,6 @@ def getTelemetry( message):
                 ## TODO: safely log error, unit test required
                 tk.log('Instance', '[ERR - SUBSCRIBED] - ' + message_client_id + ' - ' + message_text, 'DEBUG')
                 pass
-
 def push1( websocket_obj):
     """!
     A non-busy forever loop pushes telemetry to client.
@@ -195,7 +303,6 @@ def cmd1_connect( message):
     Feedback = json.dumps("OK")
     message.reply_channel.send({'accept': True, 'text':Feedback})
     tk.log(defaultInstance,'Commanding connected to  client','INFO')
-
 def cmd1_disconnect( message):
     """!
     Accepts disconnection message and disconnects with client.
@@ -205,7 +312,6 @@ def cmd1_disconnect( message):
     Feedback = json.dumps("ENDOK")
     message.reply_channel.send({'close': True, 'text':Feedback})
     tk.log('defaultInstance', 'Commanding (dis)connected from client', 'INFO')
-
 def cmd2_connect( message):
     """!
     Accepts request and establishes a connection with client.
@@ -215,7 +321,6 @@ def cmd2_connect( message):
     Feedback = json.dumps("OK")
     message.reply_channel.send({'accept': True, 'text': Feedback})
     tk.log(defaultInstance,'Commanding connected to  client','INFO')
-
 def cmd2_disconnect( message):
     """!
     Accepts disconnection message and disconnects with client.
@@ -225,7 +330,6 @@ def cmd2_disconnect( message):
     Feedback = json.dumps("ENDOK")
     message.reply_channel.send({'close': True, 'text': Feedback})
     tk.log('defaultInstance', 'Commanding (dis)connected from client', 'INFO')
-
 def test_db_wrapper(input,output,code,desc):
     """!
     This is a hook to record inputs and subsequent outputs that are generated by Command.
@@ -237,7 +341,7 @@ def test_db_wrapper(input,output,code,desc):
     """
     if mode == 0:
         try:
-            conn = sqlite3.connect(test_db_path + '/test_database', timeout=5)
+            conn = sqlite3.connect(app_path + '/test_database', timeout=5)
             tk.collectTestCases(conn, code, input, output, desc)
             conn.commit()
             conn.close()
@@ -246,7 +350,6 @@ def test_db_wrapper(input,output,code,desc):
             ## TODO: safely log error, unit test required
             tk.log('Train', 'NA', 'ERROR')
             pass
-
 def getCommandInfo( message):
     """!
     Takes the command message object and requests commanding information from pyliner/yamcs.
@@ -268,7 +371,6 @@ def getCommandInfo( message):
         ## Train
         test_db_wrapper(message_text, data, 'CMDINFO', 'commanding information')
         message.reply_channel.send({'text':data})
-
 def postCommand( message):
     """!
     Takes the command message object and posts it to pyliner/yamcs.
@@ -299,23 +401,6 @@ def postCommand( message):
 
 
 
-def inst_connect( message):
-    """!
-    Accepts request and establishes a connection with client.
-    @param message: connection request from client, this message will connection headers.
-    @return: void
-    """
-    message.reply_channel.send({'accept': True})
-
-
-def inst_disconnect( message):
-    """!
-    Accepts disconnection message and disconnects with client.
-    @param message: disconnection request from client, this message will disconnection headers.
-    @return: void
-    """
-    message.reply_channel.send({'close': True})
-
 
 def tid_connect( message):
     """!
@@ -324,8 +409,6 @@ def tid_connect( message):
     @return: void
     """
     message.reply_channel.send({'accept': True})
-
-
 def tid_disconnect( message):
     """!
     Accepts disconnection message and disconnects with client.
@@ -333,20 +416,6 @@ def tid_disconnect( message):
     @return: void
     """
     message.reply_channel.send({'close': True})
-
-def getInstanceList( message):
-    """!
-    This function is invoked by the client. Upon such an event, an instance list is requested from
-    pyliner/yamcs which is forwarded to client.
-    @param message: invoke signal sent from client
-    @return: void
-    """
-    name = message.content['text']
-    response = urllib.urlopen('http://' + str(address) + ':' + str(port) + '/api/instances')
-    data = json.loads(json.dumps(response.read()))
-    message.reply_channel.send({'text': data})
-
-
 def setDefaultInstance(message):
     """!
     Upon an instance being selected on the application, this method is called; which updates redis cache
@@ -365,48 +434,6 @@ def setDefaultInstance(message):
 
 
 
-
-def dir_connect(message):
-    """!
-    Accepts request and establishes a connection with client.
-    @param message: connection request from client, this message will connection headers.
-    @return: void
-    """
-    message.reply_channel.send({'accept': True})
-
-def dir_disconnect(message):
-    """!
-    Accepts disconnection message and disconnects with client.
-    @param message: disconnection request from client, this message will disconnection headers.
-    @return: void
-    """
-    message.reply_channel.send({'close': True})
-
-
-
-
-def directoryListing(message):
-    """!
-    Takes the file or directory name in the  message object, scrapes file system and sends out a json to client
-    which has sub-directories listed.
-    @param message: message object with directory or file name is sent from the client.
-    @return: void
-    """
-    name = message.content['text']
-
-    response = tk.get_directory(name)
-    data = json.dumps(response)
-    ## Train
-    test_db_wrapper(name, data,'DIR','obtain directory listing')
-    message.reply_channel.send({'text': data})
-    tk.log('Directory',' Packet ' + name + ' sent.','INFO')
-
-
-
-
-
-
-
 def eve_connect(message):
     """!
     Accepts request and establishes a connection with client.
@@ -414,7 +441,6 @@ def eve_connect(message):
     @return: void
     """
     message.reply_channel.send({'accept': True})
-
 def eve_disconnect(message):
     """!
     Accepts disconnection message and disconnects with client.
@@ -422,7 +448,6 @@ def eve_disconnect(message):
     @return: void
     """
     message.reply_channel.send({'close': True})
-
 def getEvents(message):
     """!
     Upon receipt of invoke signal this function generates a process which pushes live event feeds to client.
@@ -467,7 +492,6 @@ def getEvents(message):
             ## TODO: safely log error, unit test required
             tk.log('Event', 'Unable to kill.', 'ERROR')
             pass
-
 def push(websocket_obj,message_obj):
     """!
     A non-busy forever loop pushes events to client.
@@ -490,11 +514,6 @@ def push(websocket_obj,message_obj):
             print result
         ## avoids busy-while-loop
         time.sleep(0.01)
-
-
-
-
-
 def vid_connect( message):
     """!
     Accepts request and establishes a connection with client.
@@ -502,8 +521,6 @@ def vid_connect( message):
     @return: void
     """
     message.reply_channel.send({'accept': True})
-
-
 def vid_disconnect( message):
     """!
     Accepts disconnection message and disconnects with client.
@@ -511,8 +528,6 @@ def vid_disconnect( message):
     @return: void
     """
     message.reply_channel.send({'close': True})
-
-
 def getVideo( message):
     """!
     Invokes a continuous looping function which will push video images to client.
@@ -521,8 +536,6 @@ def getVideo( message):
     """
     name = message.content['text']
     VideoThroughUDP(message)
-
-
 def VideoThroughUDP(msg_obj):
     """!
     Binds with UDP port and forwards image data as and when received from pyliner/yamcs.
@@ -547,44 +560,69 @@ def VideoThroughUDP(msg_obj):
 
 
 
-'''
-adsb_proc = {}
 
-def adsb_connect(message):
-    Feedback = json.dumps("ENDOK")
-    message.reply_channel.send({'accept': True, 'text': Feedback})
-    tk.log('ADSB', 'Connected.', 'INFO')
+# independent channels
+def inst_connect( message):
+    """!
+    Accepts request and establishes a connection with client.
+    @param message: connection request from client, this message will connection headers.
+    @return: void
+    """
+    message.reply_channel.send({'accept': True})
 
-def adsb_disconnect(medssage):
-    Feedback = json.dumps("ENDOK")
-    message.reply_channel.send({'close': True, 'text': Feedback})
-    tk.log('Instance', '(Dis)connected.', 'INFO')
+def inst_disconnect( message):
+    """!
+    Accepts disconnection message and disconnects with client.
+    @param message: disconnection request from client, this message will disconnection headers.
+    @return: void
+    """
+    message.reply_channel.send({'close': True})
 
-def getAdsb(message):
-    global adsb_proc,c
-    client_id = message.content['reply_channel']
-    message_text = tk.byteify(message.content['text'])
-    if  message_text.find('initialize')!=-1:
-        process = Process(target=push_adsb,args=(message,))
-        process.start()
-        adsb_proc[client_id]=process.pid
-    elif  message_text.find('disolve')!=-1:
-        for e in adsb_proc.keys():
-            to_kill = psutil.Process(adsb_proc[e])
-            to_kill.kill()
-            del adsb_proc[e]
-        print 'end'
+def getInstanceList( message):
+    """!
+    This function is invoked by the client. Upon such an event, an instance list is requested from
+    pyliner/yamcs which is forwarded to client.
+    @param message: invoke signal sent from client
+    @return: void
+    """
+    name = message.content['text']
+    response = urllib.urlopen('http://' + str(address) + ':' + str(port) + '/api/instances')
+    data = json.loads(json.dumps(response.read()))
+    message.reply_channel.send({'text': data})
+    logi('Instances list is sent.')
+
+def dir_connect(message):
+    """!
+    Accepts request and establishes a connection with client.
+    @param message: connection request from client, this message will connection headers.
+    @return: void
+    """
+    message.reply_channel.send({'accept': True})
+
+def dir_disconnect(message):
+    """!
+    Accepts disconnection message and disconnects with client.
+    @param message: disconnection request from client, this message will disconnection headers.
+    @return: void
+    """
+    message.reply_channel.send({'close': True})
+
+def directoryListing(message):
+    """!
+    Takes the file or directory name in the  message object, scrapes file system and sends out a json to client
+    which has sub-directories listed.
+    @param message: message object with directory or file name is sent from the client.
+    @return: void
+    """
+    name = message.content['text']
+    response = tk.get_directory(name)
+    data = json.dumps(response)
+    ## Train
+    #test_db_wrapper(name, data,'DIR','obtain directory listing')
+    message.reply_channel.send({'text': data})
+    logi('Directory list under \' %s \' is sent.',name)
 
 
-def push_adsb(msg_obj):
-    while True:
-        response = urllib.urlopen('http://' + str(address) + ':8080/dump1090/data.json')
-        d = json.loads(json.dumps(response.read()))
-        msg_obj.reply_channel.send({'text':d})
-        print d
-        time.sleep(0.01)
-
-'''
 class MyCache:
     """!
    Loads launch variable to cache
@@ -597,27 +635,33 @@ class MyCache:
         ## Initialize redis caching database
         self.redis_cache = redis.StrictRedis(host='localhost', port=6379, db=0)
 
+
     def initialize(self):
         """!
         Initializes redis cache with lauch variables which will persist through out the application.
         And performs certain housekeeping tasks.
         @return: void
         """
+
+        for key in self.redis_cache.keys():
+            self.redis_cache.delete(key)
         try:
             with open(os.path.dirname(os.path.realpath(os.path.dirname(__file__))) + '/scripts/launch_config.json') as file:
                 config = json.load(file)
-                self.redis_cache.set ('instance',None)
+
                 self.redis_cache.set('default_instance', config['pyliner']['default_instance'])
                 self.redis_cache.set('address', config['pyliner']['address'])
                 self.redis_cache.set('port', config['pyliner']['port'])
                 self.redis_cache.set('video_port', config['pyliner']['video_port'])
                 self.redis_cache.set('adsb_port', config['pyliner']['adsb_port'])
+                self.redis_cache.set('activeSubscriptions','{}')
                 self.redis_cache.set('number_of_workers', config['number_of_workers'])
                 self.redis_cache.set('mode', config['mode'])
                 self.redis_cache.set('app_path', config['app_path'])
-                self.redis_cache.set('t_btn_cnt',0)
+                self.redis_cache.set('t_btn_cnt',0)#TODO: REMOVE THIS
 
                 ## clean test database, table
+                """
                 if int(self.redis_cache.get('mode')) == 0:
                     conn = sqlite3.connect(self.redis_cache.get('app_path') + '/test_database', timeout=5)
                     c = conn.cursor()
@@ -625,10 +669,10 @@ class MyCache:
                     c.execute(ex)
                     conn.commit()
                     conn.close()
-            tk.log('Preconfiguration', 'Successful', 'INFO')
+                """
+            logi('Preloading redis datastore is complete.')
         except Exception as e:
             ## TODO: safely log error, unit test required
-            tk.log('Preconfiguration', 'Faliure - '+str(e), 'ERROR')
-            #tk.log('Preconfiguration', 'Faliure - '+str(e), 'ERROR')
+            logw('Preloading redis datastore failed with error %s',e)
             pass
 

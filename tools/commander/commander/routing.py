@@ -1,4 +1,4 @@
-from channels.routing import route,include
+from channels.routing import route,route_class
 from groundcontrol.consumers import *
 
 # Load variables into cache
@@ -6,13 +6,8 @@ mc = MyCache()
 mc.initialize()
 
 
-
-
 channel_routing = [
-
-                    route(u'websocket.connect', tlm_connect, path='/tlm'),
-                    route(u'websocket.receive', getTelemetry, path='/tlm'),
-                    route(u'websocket.disconnect', tlm_disconnect, path='/tlm'),
+                    route_class(session_maintainance, path = '/session'),
 
                     route(u'websocket.connect', cmd1_connect, path='/cmd1'),
                     route(u'websocket.receive', getCommandInfo, path='/cmd1'),
@@ -26,9 +21,7 @@ channel_routing = [
                     route(u'websocket.receive', getInstanceList, path='/inst'),
                     route(u'websocket.disconnect', inst_disconnect, path='/inst'),
 
-                    route(u'websocket.connect', tid_connect, path='/tid'),
-                    route(u'websocket.receive', setDefaultInstance, path='/tid'),
-                    route(u'websocket.disconnect', tid_disconnect, path='/tid'),
+
 
                     route(u'websocket.connect', dir_connect, path='/dir'),
                     route(u'websocket.receive', directoryListing, path='/dir'),

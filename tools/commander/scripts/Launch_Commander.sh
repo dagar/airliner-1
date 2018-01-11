@@ -24,9 +24,9 @@ trap bomb SIGINT
 
 # Executes when program is interrupted.
 bomb(){
-  tput setaf 1;
+
   cat art/commander_blood
-  tput setaf 7;
+
   for each in "${arr[@]}"
   do
     echo "Killing process, ID: [$each]"
@@ -43,8 +43,9 @@ WORKERS=`jq '.number_of_workers' launch_config.json`
 PORT=`jq '.daphne_port' launch_config.json`
 
 
+echo
+echo
 
-tput setaf 2;
 if [[ $1 =~ $r0 ]] ; then
     echo "MODE : TRAIN"
     jq '.mode = 0'  launch_config.json > tmp.$$.json && mv tmp.$$.json launch_config.json

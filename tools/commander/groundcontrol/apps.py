@@ -11,3 +11,6 @@ class PollsConfig(AppConfig):
     """
     ## define application name
     name = 'groundcontrol'
+
+
+

@@ -16,3 +16,6 @@ urlpatterns = [url(r'^$', views.index, name='index'),  ## Routing in url like [1
                url(r'^(\w+)/(\w+).pug$', views.router, name ='router_2_layer'),  ## Routing in url like [127.0.0.1:8000/abc/def/ghi]
 
                ]
+
+
+
