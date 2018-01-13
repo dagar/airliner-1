@@ -267,30 +267,51 @@ Session_Maintainance.prototype = {
             log('INFO','Message queued.','subscribeTelemetry');
             this.queuedSubscribers.push({'message':message, 'callback':cb});
         }
+        var wsr = null;
+        protobuf.load("/static/proto/web.proto",function(err,root){
 
-        socket.onmessage = function (message){
-            log('INFO','Message received.','subscribeTelemetry');
-            var fixedDataString = message.data.replace(/\'/g, '"')
-            fixedDataString = fixedDataString.replace(new RegExp('True', 'g'),'true');
-            fixedDataString = fixedDataString.replace(new RegExp('False', 'g'),'false');
-            var data = JSON.parse(fixedDataString);
+            console.log(err);
+            wsr = root.lookupType("web.WebSocketServerMessage");
+            console.log('success');
 
-            if(data.hasOwnProperty('parameter')) {
-                data.parameter.forEach(function(param){
-                    var tlmName = param.id.name;
+            socket.onmessage = function (message2){
 
-                    if(tlmName in self.subscribers){
-                        var subscriptions = self.subscribers[tlmName];
-                        subscriptions.forEach(function(subscription){
-                            subscription.callback(param);
-                        });
-                    }
+                console.log(message2);
+                var obj = wsr.toObject(atob(message2.data), {
+                    enums: String,  // enums as string names
+                    longs: String,  // longs as strings (requires long.js)
+                    bytes: String,  // bytes as base64 encoded strings
+                    defaults: true, // includes default values
+                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
+                    objects: true,  // populates empty objects (map fields) even if defaults=false
                 });
+                //console.log(atob(message2.data))
+                log('INFO','Message received.','subscribeTelemetry');
+
+                console.log(obj);
+
+                var fixedDataString = message2.data.replace(/\'/g, '"')
+                fixedDataString = fixedDataString.replace(new RegExp('True', 'g'),'true');
+                fixedDataString = fixedDataString.replace(new RegExp('False', 'g'),'false');
+                var data = JSON.parse(fixedDataString);
+
+                if(data.hasOwnProperty('parameter')) {
+                    data.parameter.forEach(function(param){
+                        var tlmName = param.id.name;
+
+                        if(tlmName in self.subscribers){
+                            var subscriptions = self.subscribers[tlmName];
+                            subscriptions.forEach(function(subscription){
+                                subscription.callback(param);
+                            });
+                        }
+                    });
+                }
+                //this.subscribers[event.data.parameter.data.keys(obj).forEach(function(key,index) {
+                //console.log(event);
+                //cb(event);
             }
-            //this.subscribers[event.data.parameter.data.keys(obj).forEach(function(key,index) {
-            //console.log(event);
-            //cb(event);
-        }
+        });
     },
 
     unSubscribeTelemetry: function(msgObj){
@@ -818,6 +839,36 @@ Session.prototype ={
 
 
 
+console.log('___________________________');
+
+protobuf.load("/static/proto/web.proto",function(err,root){
+var wsr = root.lookupType("web.WebSocketReplyData");
+var p = '\x08\x04"\x9a\x01\x08\x02\x10\x08\x1a\x93\x01\n\x90\x01\n\x1c\n\x1a/CFS/DS/CmdRejectedCounter\x12\x04\x08\x02(\x00\x1a\x04\x08\x02(\x00 \x96\xb0\x9f\xda\x8e,(\xbb\xa4\x8f\xe5\x9c\t0\x008\x01Z\x172018-01-12T16:50:05.326b\x171980-01-17T14:04:41.859\xb8\x01\xf2\xbb\x9f\xda\x8e,\xc2\x01\x172018-01-12T16:50:06.826'
+
+
+
+var obj = wsr.toObject(p, {
+  enums: String,  // enums as string names
+  longs: String,  // longs as strings (requires long.js)
+  bytes: String,  // bytes as base64 encoded strings
+  defaults: true, // includes default values
+  arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
+  objects: true,  // populates empty objects (map fields) even if defaults=false
+
+});
+
+
+
+
+console.log('success');
+console.log(obj);
+});
+
+
+
+
+
+console.log('___________________________');
 
 
 

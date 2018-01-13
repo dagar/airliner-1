@@ -7,6 +7,7 @@ passing the message as parameter. The response is written in the received messag
 import toolkit as tk
 from logger import *
 import urllib,json,os,psutil,requests,time,socket,base64,ast
+from django.core.cache import cache
 from channels import Group
 from channels.generic import BaseConsumer
 from channels.sessions import channel_session
@@ -14,10 +15,14 @@ from websocket import create_connection
 from multiprocessing import Process
 from pprint import pprint
 import inspect
-import time
+import time,random,redis_lock
+from groundcontrol.proto import web_pb2,pvalue_pb2
 ## datastores
 import redis,sqlite3
+import sys
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 redis_cache = redis.StrictRedis(host='localhost', port=6379, db=0)## Initialize redis caching database
 
@@ -42,6 +47,7 @@ proc_map_e = {}## A dictionary to store processes which push telemetry to fronte
 class session_maintainance(BaseConsumer):
     sock_map = {}  ## A dictionary to store websockets which connect backend, mapped with unique id in message object.
     proc_map = {}  ## A dictionary to store processes which push telemetry to frontend, mapped with unique id in message object.
+    inst =[]
     r = redis.StrictRedis(host='localhost', port=6379, db=0)
     channel_session = True
     method_mapping = {
@@ -55,13 +61,13 @@ class session_maintainance(BaseConsumer):
         logi('Connected to session maintainance instance.')
 
     def disconnect(self,message):
+        my_instance = str(message.channel_session['instance'])
+        Group(my_instance).discard(message.reply_channel)
         message.reply_channel.send({'close': True})
-        pprint(message.__dict__)
 
     def recv_handle(self,message):
         client_reply_channel = message.content['reply_channel']
         obj = tk.byteify(json.loads(message.content['text']))
-
         if  obj['op'] == 'bind_instance':
             # check if client is already in the broadcast group
             if client_reply_channel not in Group(obj['msg']).channel_layer.group_channels(obj['msg']):
@@ -72,53 +78,113 @@ class session_maintainance(BaseConsumer):
                 logw('Client %s already bound to broadcast group %s',client_reply_channel,obj['msg'])
         elif obj['op'] == 'subscribe_tlm' :
             tlm_obj = json.loads(obj['msg'])
-
+            tlm_slug = str(tlm_obj['tlm'][0]['name'])
             my_instance = str(message.channel_session['instance'])
-            deserialized = json.loads(self.r.get('activeSubscriptions'))
-            if my_instance not in deserialized.keys():
-                deserialized[my_instance] = []
-            if tlm_obj['tlm'] not in deserialized[my_instance]:
-                print Group(obj['msg']).channel_layer.group_channels(obj['msg'])
-                deserialized[my_instance].append(tlm_obj['tlm'])
-                self.r.set('activeSubscriptions',json.dumps(deserialized))
-                temp = '{"parameter":"subscribe", "data":{"list":' + str(tk.byteify(tlm_obj['tlm'])) + '}}'
+            #with redis_lock.Lock(self.r, 'mylock1'):
+
+                #if my_instance not in self.r.keys():
+                    #self.r.set(my_instance,'{}')#initialize k:tlm_slug v:array of listeners
+                #loc_cache = json.loads(self.r.get(my_instance))
+                #print loc_cache
+                #if tlm_slug not in loc_cache.keys():
+                    #loc_cache[tlm_slug] = [client_reply_channel]#initialize k:tlm_slug v:array of listeners
+                    #print 'cached', tlm_slug ,len(loc_cache)
+                    #pprint (loc_cache)
+                    #print self.inst,len(self.inst)
+                    #self.r.set(my_instance, json.dumps(loc_cache))
+
+            psr = web_pb2.WebSocketClientMessage()
+            sr = pvalue_pb2.ParameterValue()
+            psr.protocolVersion = 1
+            psr.sequenceNumber = 0
+            psr.resource = "parameter"
+            psr.operation = "subscribe"
+            #id = sr.id.add()
+            sr.id.name = str(tk.byteify(tlm_obj['tlm'][0]['name']))
+            psr.data = sr.SerializeToString()
+            #temp = '{"parameter":"subscribe", "data":{"list":' + str(tk.byteify(tlm_obj['tlm'])) + '}}'
+            #temp = temp.replace("\'", "\"")
+            #to_send = '[1,1,0,' + str(temp) + ']'
+            if client_reply_channel not in sock_map.keys():
+                try:
+                    ws = create_connection('ws://' + str(address) + ':' + str(port) + '/' + my_instance + '/_websocket')
+                    sock_map[client_reply_channel] = ws
+                    sock_map[client_reply_channel].send_binary(psr.SerializeToString())
+                    #sock_map[client_reply_channel].send(to_send)
+                    process = Process(target=self.push,args=(sock_map[client_reply_channel],my_instance,client_reply_channel))
+                    process.start()
+                    proc_map[client_reply_channel] = process.pid
+                    logd('New push process has been created with pid %s.',str(process.pid))
+                except Exception, err:
+                    loge('Encountered error while creating a process. Error: %s',err)
+                    pass
+            else:
+                try:
+                    sock_map[client_reply_channel].send_binary(psr.SerializeToString())
+                    logd('Client %s is now [SUBSCRIBE] to %s bound to instance %s',client_reply_channel,obj['msg'],message.channel_session['instance'])
+                except Exception, err:
+                    ## TODO: safely log error, unit test required
+                    loge('[SUBSCRIBE] error occured for client %s on item %s for instance %s. Error: %s',client_reply_channel,obj['msg'],message.channel_session['instance'],err)
+                    pass
+                #else:
+
+                    #loc_cache[tlm_slug].append(client_reply_channel)
+                    #pprint(loc_cache)
+                    #c = 1
+                    #for e in loc_cache.keys():
+                        #if len(loc_cache[e])==2:
+                            #c+=1
+                    #print c
+                    #print 'missing',tlm_slug
+                    #self.r.set(my_instance, json.dumps(loc_cache))
+                    #time.sleep(random.randint(1, 5) / 100)
+
+                #print '******',deserialized[my_instance][tlm_slug], len(deserialized[my_instance][tlm_slug])
+                #self.r.set('activeSubscriptions', json.dumps(deserialized))
+                #self.r.set('activeSubscriptions', json.dumps(deserialized))
+                #self.r.set('activeSubscriptions', json.dumps(deserialized))
+                #logw('No need SUBSCRIBE for client %s on item %s for instance %s',client_reply_channel,obj['msg'],message.channel_session['instance'])
+        elif obj['op'] == 'unsubscribe_tlm':
+            my_instance = str(message.channel_session['instance'])
+            tlm_obj = json.loads(obj['msg'])
+            tlm_slug = str(tlm_obj['tlm'][0]['name'])
+            #my_instance = str(message.channel_session['instance'])
+            #with redis_lock.Lock(self.r, 'mylock2'):
+            # remove listener
+            #pprint(deserialized)
+            #pprint(deserialized)
+            #pprint(deserialized)
+            #pprint(deserialized)
+            try:
+                temp = '{"parameter":"unsubscribe", "data":{"list":' + str(tk.byteify(tlm_obj['tlm'])) + '}}'
                 temp = temp.replace("\'", "\"")
                 to_send = '[1,1,0,' + str(temp) + ']'
-                if client_reply_channel not in sock_map.keys():
-                    try:
-                        ws = create_connection('ws://' + str(address) + ':' + str(port) + '/' + my_instance + '/_websocket')
-                        sock_map[client_reply_channel] = ws
-                        sock_map[client_reply_channel].send(to_send)
-                        process = Process(target=self.push,args=(sock_map[client_reply_channel],my_instance,client_reply_channel))
-                        process.start()
-                        proc_map[client_reply_channel] = process.pid
-                        logd('New push process has been created with pid %s.',str(process.pid))
-                    except Exception, err:
-                        loge('Encountered error while creating a process. Error: %s',err)
-                        pass
-                else:
-                    try:
-                        sock_map[client_reply_channel].send(to_send)
-                        logd('Client %s is now subscribed to %s bound to instance %s',client_reply_channel,obj['msg'],message.channel_session['instance'])
-                    except Exception, err:
-                        ## TODO: safely log error, unit test required
-                        loge('Subscription error occured for client %s on item %s for instance %s. Error: %s',client_reply_channel,obj['msg'],message.channel_session['instance'],err)
-                        pass
-            else:
-                logw('No need subscription for client %s on item %s for instance %s',client_reply_channel,obj['msg'],message.channel_session['instance'])
-        elif obj['op'] == 'unsubscribe_tlm':
-            tlm_obj = json.loads(obj['msg'])
-            print Group(obj['msg']).channel_layer.group_channels(obj['msg'])
-            my_instance = str(message.channel_session['instance'])
-            deserialized = json.loads(self.r.get('activeSubscriptions'))
+                #print tlm_slug,'----us--', deserialized[my_instance][tlm_slug]
+                ## sending unsubscribe signal to pyliner/yamcs
+                #for each in sock_map.keys():
+                sock_map[client_reply_channel].send(to_send)
+                logw('[UNSUBSCRIBE] attempt made for client %s on item %s for instance %s.',client_reply_channel, obj['msg'], message.channel_session['instance'])
+                #self.r.set(my_instance, json.dumps(loc_cache))
+            except Exception, err:
+                #print 'attempt-remove [', tlm_slug, client_reply_channel, ']'
+                #pprint(deserialized)
+                #print len(deserialized[my_instance].keys())
+                logw('Did not [UNSUBSCRIBE] this time for client %s on item %s for instance %s. Error: %s',client_reply_channel, obj['msg'], message.channel_session['instance'], err)
 
-            temp = '{"parameter":"unsubscribe", "data":{"list":' + str(tk.byteify(tlm_obj['tlm'])) + '}}'
-            temp = temp.replace("\'", "\"")
-            to_send = '[1,1,0,' + str(temp) + ']'
-            ## sending unsubscribe signal to pyliner/yamcs
-            sock_map[client_reply_channel].send(to_send)
-        elif obj['op']=='kill_all_tlm':
-            print 'lol'
+        elif obj['op'] == 'kill_all_tlm':
+            try:
+                to_kill_pid = proc_map[client_reply_channel]
+                to_kill = psutil.Process(to_kill_pid)
+                to_kill.kill()
+                del proc_map[client_reply_channel]
+                del sock_map[client_reply_channel]
+                logw('[TLMKILL] attempt made for client %s on process %s for instance %s.',client_reply_channel, str(to_kill_pid), message.channel_session['instance'])
+            except:
+                ## TODO: safely log error, unit test required
+                logw('[TLMKILL] attempt made was UNSUCCESSFUL for client %s on process %s for instance %s.',client_reply_channel, str(to_kill_pid), message.channel_session['instance'])
+                pass
+            #deserialized = json.loads(self.r.get('activeSubscriptions'))
+            #print 'deserialized'
 
 
 
@@ -131,14 +197,9 @@ class session_maintainance(BaseConsumer):
         while True:
             try:
                 result = websocket_obj.recv()
-                ## If result is not a ACK signal, in YAMCS case ACK looks like `[1,2,x]`
-                if result != '[1,2,0]':
-                    result2 = tk.preProcess(result,inst_name)
-                    """INTROSPECTION PURPOSE ONLY"""
-                    #e_list = json.loads(json.dumps(ast.literal_eval(result2)))
-                    #for e in e_list['parameter']:
-                    #    print websocket_obj,'---------------',id,'-------------------',e['id']['name']
-                    Group(inst_name).send({'text': result2})
+                print result
+                Group(inst_name).send({'text': base64.b64encode(result)})
+
             except Exception, err:
                 loge('Push error occured while trying to push messages to client. Error %s',err)
                 break
@@ -654,7 +715,7 @@ class MyCache:
                 self.redis_cache.set('port', config['pyliner']['port'])
                 self.redis_cache.set('video_port', config['pyliner']['video_port'])
                 self.redis_cache.set('adsb_port', config['pyliner']['adsb_port'])
-                self.redis_cache.set('activeSubscriptions','{}')
+                #cache.set('activeSubscriptions','{}')
                 self.redis_cache.set('number_of_workers', config['number_of_workers'])
                 self.redis_cache.set('mode', config['mode'])
                 self.redis_cache.set('app_path', config['app_path'])
