@@ -24,7 +24,7 @@ import yamcsManagement_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='web.proto',
   package='web',
-  serialized_pb=_b('\n\tweb.proto\x12\x03web\x1a\x0byamcs.proto\x1a\rarchive.proto\x1a\x10\x63ommanding.proto\x1a\x0cpvalue.proto\x1a\x0c\x61larms.proto\x1a\x15yamcsManagement.proto\"|\n\x16WebSocketClientMessage\x12\x17\n\x0fprotocolVersion\x18\x01 \x01(\r\x12\x16\n\x0esequenceNumber\x18\x02 \x01(\r\x12\x10\n\x08resource\x18\x03 \x01(\t\x12\x11\n\toperation\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\"\x8f\t\n\x16WebSocketServerMessage\x12\x35\n\x04type\x18\x01 \x01(\x0e\x32\'.web.WebSocketServerMessage.MessageType\x12=\n\x05reply\x18\x02 \x01(\x0b\x32..web.WebSocketServerMessage.WebSocketReplyData\x12\x45\n\texception\x18\x03 \x01(\x0b\x32\x32.web.WebSocketServerMessage.WebSocketExceptionData\x12\x43\n\x04\x64\x61ta\x18\x04 \x01(\x0b\x32\x35.web.WebSocketServerMessage.WebSocketSubscriptionData\x1a\x45\n\x12WebSocketReplyData\x12\x17\n\x0fprotocolVersion\x18\x01 \x01(\r\x12\x16\n\x0esequenceNumber\x18\x02 \x01(\x05\x1av\n\x16WebSocketExceptionData\x12\x17\n\x0fprotocolVersion\x18\x01 \x01(\r\x12\x16\n\x0esequenceNumber\x18\x02 \x01(\x05\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\x1a\x80\x05\n\x19WebSocketSubscriptionData\x12\x16\n\x0esequenceNumber\x18\x01 \x01(\r\x12\"\n\x04type\x18\x02 \x01(\x0e\x32\x14.yamcs.ProtoDataType\x12,\n\rparameterData\x18\x03 \x01(\x0b\x32\x15.pvalue.ParameterData\x12\x30\n\x07\x63ommand\x18\x04 \x01(\x0b\x32\x1f.commanding.CommandHistoryEntry\x12\x35\n\rprocessorInfo\x18\x05 \x01(\x0b\x32\x1e.yamcsManagement.ProcessorInfo\x12/\n\nclientInfo\x18\x06 \x01(\x0b\x32\x1b.yamcsManagement.ClientInfo\x12/\n\nstatistics\x18\x07 \x01(\x0b\x32\x1b.yamcsManagement.Statistics\x12\x1b\n\x05\x65vent\x18\x08 \x01(\x0b\x32\x0c.yamcs.Event\x12\'\n\nstreamData\x18\t \x01(\x0b\x32\x13.archive.StreamData\x12$\n\talarmData\x18\n \x01(\x0b\x32\x11.alarms.AlarmData\x12!\n\x08timeInfo\x18\x0b \x01(\x0b\x32\x0f.yamcs.TimeInfo\x12-\n\tlinkEvent\x18\x0c \x01(\x0b\x32\x1a.yamcsManagement.LinkEvent\x12\x36\n\x10\x63ommandQueueInfo\x18\r \x01(\x0b\x32\x1c.commanding.CommandQueueInfo\x12\x38\n\x11\x63ommandQueueEvent\x18\x0e \x01(\x0b\x32\x1d.commanding.CommandQueueEvent\"1\n\x0bMessageType\x12\t\n\x05REPLY\x10\x02\x12\r\n\tEXCEPTION\x10\x03\x12\x08\n\x04\x44\x41TA\x10\x04\"1\n\x14RestExceptionMessage\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0b\n\x03msg\x18\x02 \x01(\tB\x14\n\x12org.yamcs.protobuf')
+  serialized_pb=_b('\n\tweb.proto\x12\x03web\x1a\x0byamcs.proto\x1a\rarchive.proto\x1a\x10\x63ommanding.proto\x1a\x0cpvalue.proto\x1a\x0c\x61larms.proto\x1a\x15yamcsManagement.proto\"|\n\x16WebSocketClientMessage\x12\x17\n\x0fprotocolVersion\x18\x01 \x01(\r\x12\x16\n\x0esequenceNumber\x18\x02 \x01(\r\x12\x10\n\x08resource\x18\x03 \x01(\t\x12\x11\n\toperation\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\"\xc4\n\n\x16WebSocketServerMessage\x12\x35\n\x04type\x18\x01 \x01(\x0e\x32\'.web.WebSocketServerMessage.MessageType\x12=\n\x05reply\x18\x02 \x01(\x0b\x32..web.WebSocketServerMessage.WebSocketReplyData\x12\x45\n\texception\x18\x03 \x01(\x0b\x32\x32.web.WebSocketServerMessage.WebSocketExceptionData\x12\x43\n\x04\x64\x61ta\x18\x04 \x01(\x0b\x32\x35.web.WebSocketServerMessage.WebSocketSubscriptionData\x1ar\n\x12WebSocketReplyData\x12\x17\n\x0fprotocolVersion\x18\x01 \x01(\r\x12\x16\n\x0esequenceNumber\x18\x02 \x01(\x05\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\x1av\n\x16WebSocketExceptionData\x12\x17\n\x0fprotocolVersion\x18\x01 \x01(\r\x12\x16\n\x0esequenceNumber\x18\x02 \x01(\x05\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\x1a\x88\x06\n\x19WebSocketSubscriptionData\x12\x16\n\x0esequenceNumber\x18\x01 \x01(\r\x12\"\n\x04type\x18\x02 \x01(\x0e\x32\x14.yamcs.ProtoDataType\x12,\n\rparameterData\x18\x03 \x01(\x0b\x32\x15.pvalue.ParameterData\x12\x30\n\x07\x63ommand\x18\x04 \x01(\x0b\x32\x1f.commanding.CommandHistoryEntry\x12\x35\n\rprocessorInfo\x18\x05 \x01(\x0b\x32\x1e.yamcsManagement.ProcessorInfo\x12/\n\nclientInfo\x18\x06 \x01(\x0b\x32\x1b.yamcsManagement.ClientInfo\x12/\n\nstatistics\x18\x07 \x01(\x0b\x32\x1b.yamcsManagement.Statistics\x12\x1b\n\x05\x65vent\x18\x08 \x01(\x0b\x32\x0c.yamcs.Event\x12\'\n\nstreamData\x18\t \x01(\x0b\x32\x13.archive.StreamData\x12$\n\talarmData\x18\n \x01(\x0b\x32\x11.alarms.AlarmData\x12!\n\x08timeInfo\x18\x0b \x01(\x0b\x32\x0f.yamcs.TimeInfo\x12-\n\tlinkEvent\x18\x0c \x01(\x0b\x32\x1a.yamcsManagement.LinkEvent\x12\x36\n\x10\x63ommandQueueInfo\x18\r \x01(\x0b\x32\x1c.commanding.CommandQueueInfo\x12\x38\n\x11\x63ommandQueueEvent\x18\x0e \x01(\x0b\x32\x1d.commanding.CommandQueueEvent\x12%\n\x08tmPacket\x18\x0f \x01(\x0b\x32\x13.yamcs.TmPacketData\x12+\n\x0e\x63onnectionInfo\x18\x10 \x01(\x0b\x32\x13.web.ConnectionInfo\x12\x32\n\rextensionData\x18\x64 \x01(\x0b\x32\x1b.web.WebSocketExtensionData\"1\n\x0bMessageType\x12\t\n\x05REPLY\x10\x02\x12\r\n\tEXCEPTION\x10\x03\x12\x08\n\x04\x44\x41TA\x10\x04\"4\n\x16WebSocketExtensionData\x12\x0c\n\x04type\x18\x01 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"8\n\x14RestExceptionMessage\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0b\n\x03msg\x18\x02 \x01(\t*\x05\x08\x64\x10\xc9\x01\"\xb4\x01\n\x1cParameterSubscriptionRequest\x12 \n\x02id\x18\x01 \x03(\x0b\x32\x14.yamcs.NamedObjectId\x12\x16\n\x0e\x61\x62ortOnInvalid\x18\x02 \x01(\x08\x12\x1a\n\x12updateOnExpiration\x18\x03 \x01(\x08\x12\x15\n\rsendFromCache\x18\x04 \x01(\x08\x12\'\n\x04list\x18\x90N \x03(\x0b\x32\x14.yamcs.NamedObjectIdB\x02\x18\x01\"k\n\x1dParameterSubscriptionResponse\x12#\n\x05valid\x18\x01 \x03(\x0b\x32\x14.yamcs.NamedObjectId\x12%\n\x07invalid\x18\x02 \x03(\x0b\x32\x14.yamcs.NamedObjectId\"\x87\x01\n\x0e\x43onnectionInfo\x12\x10\n\x08\x63lientId\x18\x01 \x01(\x05\x12\x30\n\x08instance\x18\x02 \x01(\x0b\x32\x1e.yamcsManagement.YamcsInstance\x12\x31\n\tprocessor\x18\x03 \x01(\x0b\x32\x1e.yamcsManagement.ProcessorInfoB\x14\n\x12org.yamcs.protobuf')
   ,
   dependencies=[yamcs_pb2.DESCRIPTOR,archive_pb2.DESCRIPTOR,commanding_pb2.DESCRIPTOR,pvalue_pb2.DESCRIPTOR,alarms_pb2.DESCRIPTOR,yamcsManagement_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -52,8 +52,8 @@ _WEBSOCKETSERVERMESSAGE_MESSAGETYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1360,
-  serialized_end=1409,
+  serialized_start=1541,
+  serialized_end=1590,
 )
 _sym_db.RegisterEnumDescriptor(_WEBSOCKETSERVERMESSAGE_MESSAGETYPE)
 
@@ -137,6 +137,27 @@ _WEBSOCKETSERVERMESSAGE_WEBSOCKETREPLYDATA = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='web.WebSocketServerMessage.WebSocketReplyData.type', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='message', full_name='web.WebSocketServerMessage.WebSocketReplyData.message', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='data', full_name='web.WebSocketServerMessage.WebSocketReplyData.data', index=4,
+      number=5, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -149,7 +170,7 @@ _WEBSOCKETSERVERMESSAGE_WEBSOCKETREPLYDATA = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=526,
-  serialized_end=595,
+  serialized_end=640,
 )
 
 _WEBSOCKETSERVERMESSAGE_WEBSOCKETEXCEPTIONDATA = _descriptor.Descriptor(
@@ -205,8 +226,8 @@ _WEBSOCKETSERVERMESSAGE_WEBSOCKETEXCEPTIONDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=597,
-  serialized_end=715,
+  serialized_start=642,
+  serialized_end=760,
 )
 
 _WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA = _descriptor.Descriptor(
@@ -314,6 +335,27 @@ _WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='tmPacket', full_name='web.WebSocketServerMessage.WebSocketSubscriptionData.tmPacket', index=14,
+      number=15, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='connectionInfo', full_name='web.WebSocketServerMessage.WebSocketSubscriptionData.connectionInfo', index=15,
+      number=16, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='extensionData', full_name='web.WebSocketServerMessage.WebSocketSubscriptionData.extensionData', index=16,
+      number=100, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -325,8 +367,8 @@ _WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=718,
-  serialized_end=1358,
+  serialized_start=763,
+  serialized_end=1539,
 )
 
 _WEBSOCKETSERVERMESSAGE = _descriptor.Descriptor(
@@ -377,7 +419,44 @@ _WEBSOCKETSERVERMESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=242,
-  serialized_end=1409,
+  serialized_end=1590,
+)
+
+
+_WEBSOCKETEXTENSIONDATA = _descriptor.Descriptor(
+  name='WebSocketExtensionData',
+  full_name='web.WebSocketExtensionData',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='type', full_name='web.WebSocketExtensionData.type', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='data', full_name='web.WebSocketExtensionData.data', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1592,
+  serialized_end=1644,
 )
 
 
@@ -409,12 +488,151 @@ _RESTEXCEPTIONMESSAGE = _descriptor.Descriptor(
   enum_types=[
   ],
   options=None,
+  is_extendable=True,
+  extension_ranges=[(100, 201), ],
+  oneofs=[
+  ],
+  serialized_start=1646,
+  serialized_end=1702,
+)
+
+
+_PARAMETERSUBSCRIPTIONREQUEST = _descriptor.Descriptor(
+  name='ParameterSubscriptionRequest',
+  full_name='web.ParameterSubscriptionRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='id', full_name='web.ParameterSubscriptionRequest.id', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='abortOnInvalid', full_name='web.ParameterSubscriptionRequest.abortOnInvalid', index=1,
+      number=2, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='updateOnExpiration', full_name='web.ParameterSubscriptionRequest.updateOnExpiration', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='sendFromCache', full_name='web.ParameterSubscriptionRequest.sendFromCache', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='list', full_name='web.ParameterSubscriptionRequest.list', index=4,
+      number=10000, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\030\001'))),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
   is_extendable=False,
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1411,
-  serialized_end=1460,
+  serialized_start=1705,
+  serialized_end=1885,
+)
+
+
+_PARAMETERSUBSCRIPTIONRESPONSE = _descriptor.Descriptor(
+  name='ParameterSubscriptionResponse',
+  full_name='web.ParameterSubscriptionResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='valid', full_name='web.ParameterSubscriptionResponse.valid', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='invalid', full_name='web.ParameterSubscriptionResponse.invalid', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1887,
+  serialized_end=1994,
+)
+
+
+_CONNECTIONINFO = _descriptor.Descriptor(
+  name='ConnectionInfo',
+  full_name='web.ConnectionInfo',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='clientId', full_name='web.ConnectionInfo.clientId', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='instance', full_name='web.ConnectionInfo.instance', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='processor', full_name='web.ConnectionInfo.processor', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1997,
+  serialized_end=2132,
 )
 
 _WEBSOCKETSERVERMESSAGE_WEBSOCKETREPLYDATA.containing_type = _WEBSOCKETSERVERMESSAGE
@@ -432,15 +650,28 @@ _WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA.fields_by_name['timeInfo'].mes
 _WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA.fields_by_name['linkEvent'].message_type = yamcsManagement_pb2._LINKEVENT
 _WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA.fields_by_name['commandQueueInfo'].message_type = commanding_pb2._COMMANDQUEUEINFO
 _WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA.fields_by_name['commandQueueEvent'].message_type = commanding_pb2._COMMANDQUEUEEVENT
+_WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA.fields_by_name['tmPacket'].message_type = yamcs_pb2._TMPACKETDATA
+_WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA.fields_by_name['connectionInfo'].message_type = _CONNECTIONINFO
+_WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA.fields_by_name['extensionData'].message_type = _WEBSOCKETEXTENSIONDATA
 _WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA.containing_type = _WEBSOCKETSERVERMESSAGE
 _WEBSOCKETSERVERMESSAGE.fields_by_name['type'].enum_type = _WEBSOCKETSERVERMESSAGE_MESSAGETYPE
 _WEBSOCKETSERVERMESSAGE.fields_by_name['reply'].message_type = _WEBSOCKETSERVERMESSAGE_WEBSOCKETREPLYDATA
 _WEBSOCKETSERVERMESSAGE.fields_by_name['exception'].message_type = _WEBSOCKETSERVERMESSAGE_WEBSOCKETEXCEPTIONDATA
 _WEBSOCKETSERVERMESSAGE.fields_by_name['data'].message_type = _WEBSOCKETSERVERMESSAGE_WEBSOCKETSUBSCRIPTIONDATA
 _WEBSOCKETSERVERMESSAGE_MESSAGETYPE.containing_type = _WEBSOCKETSERVERMESSAGE
+_PARAMETERSUBSCRIPTIONREQUEST.fields_by_name['id'].message_type = yamcs_pb2._NAMEDOBJECTID
+_PARAMETERSUBSCRIPTIONREQUEST.fields_by_name['list'].message_type = yamcs_pb2._NAMEDOBJECTID
+_PARAMETERSUBSCRIPTIONRESPONSE.fields_by_name['valid'].message_type = yamcs_pb2._NAMEDOBJECTID
+_PARAMETERSUBSCRIPTIONRESPONSE.fields_by_name['invalid'].message_type = yamcs_pb2._NAMEDOBJECTID
+_CONNECTIONINFO.fields_by_name['instance'].message_type = yamcsManagement_pb2._YAMCSINSTANCE
+_CONNECTIONINFO.fields_by_name['processor'].message_type = yamcsManagement_pb2._PROCESSORINFO
 DESCRIPTOR.message_types_by_name['WebSocketClientMessage'] = _WEBSOCKETCLIENTMESSAGE
 DESCRIPTOR.message_types_by_name['WebSocketServerMessage'] = _WEBSOCKETSERVERMESSAGE
+DESCRIPTOR.message_types_by_name['WebSocketExtensionData'] = _WEBSOCKETEXTENSIONDATA
 DESCRIPTOR.message_types_by_name['RestExceptionMessage'] = _RESTEXCEPTIONMESSAGE
+DESCRIPTOR.message_types_by_name['ParameterSubscriptionRequest'] = _PARAMETERSUBSCRIPTIONREQUEST
+DESCRIPTOR.message_types_by_name['ParameterSubscriptionResponse'] = _PARAMETERSUBSCRIPTIONRESPONSE
+DESCRIPTOR.message_types_by_name['ConnectionInfo'] = _CONNECTIONINFO
 
 WebSocketClientMessage = _reflection.GeneratedProtocolMessageType('WebSocketClientMessage', (_message.Message,), dict(
   DESCRIPTOR = _WEBSOCKETCLIENTMESSAGE,
@@ -480,6 +711,13 @@ _sym_db.RegisterMessage(WebSocketServerMessage.WebSocketReplyData)
 _sym_db.RegisterMessage(WebSocketServerMessage.WebSocketExceptionData)
 _sym_db.RegisterMessage(WebSocketServerMessage.WebSocketSubscriptionData)
 
+WebSocketExtensionData = _reflection.GeneratedProtocolMessageType('WebSocketExtensionData', (_message.Message,), dict(
+  DESCRIPTOR = _WEBSOCKETEXTENSIONDATA,
+  __module__ = 'web_pb2'
+  # @@protoc_insertion_point(class_scope:web.WebSocketExtensionData)
+  ))
+_sym_db.RegisterMessage(WebSocketExtensionData)
+
 RestExceptionMessage = _reflection.GeneratedProtocolMessageType('RestExceptionMessage', (_message.Message,), dict(
   DESCRIPTOR = _RESTEXCEPTIONMESSAGE,
   __module__ = 'web_pb2'
@@ -487,7 +725,30 @@ RestExceptionMessage = _reflection.GeneratedProtocolMessageType('RestExceptionMe
   ))
 _sym_db.RegisterMessage(RestExceptionMessage)
 
+ParameterSubscriptionRequest = _reflection.GeneratedProtocolMessageType('ParameterSubscriptionRequest', (_message.Message,), dict(
+  DESCRIPTOR = _PARAMETERSUBSCRIPTIONREQUEST,
+  __module__ = 'web_pb2'
+  # @@protoc_insertion_point(class_scope:web.ParameterSubscriptionRequest)
+  ))
+_sym_db.RegisterMessage(ParameterSubscriptionRequest)
+
+ParameterSubscriptionResponse = _reflection.GeneratedProtocolMessageType('ParameterSubscriptionResponse', (_message.Message,), dict(
+  DESCRIPTOR = _PARAMETERSUBSCRIPTIONRESPONSE,
+  __module__ = 'web_pb2'
+  # @@protoc_insertion_point(class_scope:web.ParameterSubscriptionResponse)
+  ))
+_sym_db.RegisterMessage(ParameterSubscriptionResponse)
+
+ConnectionInfo = _reflection.GeneratedProtocolMessageType('ConnectionInfo', (_message.Message,), dict(
+  DESCRIPTOR = _CONNECTIONINFO,
+  __module__ = 'web_pb2'
+  # @@protoc_insertion_point(class_scope:web.ConnectionInfo)
+  ))
+_sym_db.RegisterMessage(ConnectionInfo)
+
 
 DESCRIPTOR.has_options = True
 DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\022org.yamcs.protobuf'))
+_PARAMETERSUBSCRIPTIONREQUEST.fields_by_name['list'].has_options = True
+_PARAMETERSUBSCRIPTIONREQUEST.fields_by_name['list']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\030\001'))
 # @@protoc_insertion_point(module_scope)

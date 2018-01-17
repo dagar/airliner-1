@@ -21,7 +21,7 @@ import mdb_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='pvalue.proto',
   package='pvalue',
-  serialized_pb=_b('\n\x0cpvalue.proto\x12\x06pvalue\x1a\x0byamcs.proto\x1a\tmdb.proto\"\xb6\x03\n\x0eParameterValue\x12 \n\x02id\x18\x01 \x01(\x0b\x32\x14.yamcs.NamedObjectId\x12\x1e\n\x08rawValue\x18\x02 \x01(\x0b\x32\x0c.yamcs.Value\x12\x1e\n\x08\x65ngValue\x18\x03 \x01(\x0b\x32\x0c.yamcs.Value\x12\x17\n\x0f\x61\x63quisitionTime\x18\x04 \x01(\x03\x12\x16\n\x0egenerationTime\x18\x05 \x01(\x03\x12\x34\n\x11\x61\x63quisitionStatus\x18\x06 \x01(\x0e\x32\x19.pvalue.AcquisitionStatus\x12\x18\n\x10processingStatus\x18\x07 \x01(\x08\x12\x32\n\x10monitoringResult\x18\x08 \x01(\x0e\x32\x18.pvalue.MonitoringResult\x12\x1a\n\x12\x61\x63quisitionTimeUTC\x18\x0b \x01(\t\x12\x19\n\x11generationTimeUTC\x18\x0c \x01(\t\x12\x16\n\x0e\x65xpirationTime\x18\x17 \x01(\x03\x12\x19\n\x11\x65xpirationTimeUTC\x18\x18 \x01(\t\x12#\n\nalarmRange\x18\x19 \x03(\x0b\x32\x0f.mdb.AlarmRange\"q\n\rParameterData\x12)\n\tparameter\x18\x01 \x03(\x0b\x32\x16.pvalue.ParameterValue\x12\r\n\x05group\x18\x02 \x01(\t\x12\x16\n\x0egenerationTime\x18\x03 \x01(\x03\x12\x0e\n\x06seqNum\x18\x04 \x01(\x05\"\x81\x01\n\nTimeSeries\x12)\n\x06sample\x18\x01 \x03(\x0b\x32\x19.pvalue.TimeSeries.Sample\x1aH\n\x06Sample\x12\x0c\n\x04time\x18\x01 \x01(\t\x12\x0b\n\x03\x61vg\x18\x02 \x01(\x01\x12\x0b\n\x03min\x18\x03 \x01(\x01\x12\x0b\n\x03max\x18\x04 \x01(\x01\x12\t\n\x01n\x18\x05 \x01(\x05*M\n\x11\x41\x63quisitionStatus\x12\x0c\n\x08\x41\x43QUIRED\x10\x00\x12\x10\n\x0cNOT_RECEIVED\x10\x01\x12\x0b\n\x07INVALID\x10\x02\x12\x0b\n\x07\x45XPIRED\x10\x03*\x9c\x02\n\x10MonitoringResult\x12\x0c\n\x08\x44ISABLED\x10\x00\x12\r\n\tIN_LIMITS\x10\x01\x12\t\n\x05WATCH\x10\x07\x12\r\n\tWATCH_LOW\x10\x08\x12\x0e\n\nWATCH_HIGH\x10\t\x12\x0b\n\x07WARNING\x10\n\x12\x0f\n\x0bWARNING_LOW\x10\x0b\x12\x10\n\x0cWARNING_HIGH\x10\x0c\x12\x0c\n\x08\x44ISTRESS\x10\r\x12\x10\n\x0c\x44ISTRESS_LOW\x10\x0e\x12\x11\n\rDISTRESS_HIGH\x10\x0f\x12\x0c\n\x08\x43RITICAL\x10\x10\x12\x10\n\x0c\x43RITICAL_LOW\x10\x11\x12\x11\n\rCRITICAL_HIGH\x10\x12\x12\n\n\x06SEVERE\x10\x13\x12\x0e\n\nSEVERE_LOW\x10\x14\x12\x0f\n\x0bSEVERE_HIGH\x10\x15\x42\x14\n\x12org.yamcs.protobuf')
+  serialized_pb=_b('\n\x0cpvalue.proto\x12\x06pvalue\x1a\x0byamcs.proto\x1a\tmdb.proto\"\x84\x04\n\x0eParameterValue\x12 \n\x02id\x18\x01 \x01(\x0b\x32\x14.yamcs.NamedObjectId\x12\x1e\n\x08rawValue\x18\x02 \x01(\x0b\x32\x0c.yamcs.Value\x12\x1e\n\x08\x65ngValue\x18\x03 \x01(\x0b\x32\x0c.yamcs.Value\x12\x17\n\x0f\x61\x63quisitionTime\x18\x04 \x01(\x03\x12\x16\n\x0egenerationTime\x18\x05 \x01(\x03\x12\x34\n\x11\x61\x63quisitionStatus\x18\x06 \x01(\x0e\x32\x19.pvalue.AcquisitionStatus\x12\x18\n\x10processingStatus\x18\x07 \x01(\x08\x12\x32\n\x10monitoringResult\x18\x08 \x01(\x0e\x32\x18.pvalue.MonitoringResult\x12.\n\x0erangeCondition\x18\t \x01(\x0e\x32\x16.pvalue.RangeCondition\x12\x1a\n\x12\x61\x63quisitionTimeUTC\x18\x0b \x01(\t\x12\x19\n\x11generationTimeUTC\x18\x0c \x01(\t\x12\x1a\n\x0e\x65xpirationTime\x18\x17 \x01(\x03\x42\x02\x18\x01\x12\x1d\n\x11\x65xpirationTimeUTC\x18\x18 \x01(\tB\x02\x18\x01\x12#\n\nalarmRange\x18\x19 \x03(\x0b\x32\x0f.mdb.AlarmRange\x12\x14\n\x0c\x65xpireMillis\x18\x1a \x01(\x03\"\xe6\x01\n\x0fParameterStatus\x12\x34\n\x11\x61\x63quisitionStatus\x18\x01 \x01(\x0e\x32\x19.pvalue.AcquisitionStatus\x12\x32\n\x10monitoringResult\x18\x02 \x01(\x0e\x32\x18.pvalue.MonitoringResult\x12.\n\x0erangeCondition\x18\x03 \x01(\x0e\x32\x16.pvalue.RangeCondition\x12#\n\nalarmRange\x18\x04 \x03(\x0b\x32\x0f.mdb.AlarmRange\x12\x14\n\x0c\x65xpireMillis\x18\x05 \x01(\x03\"q\n\rParameterData\x12)\n\tparameter\x18\x01 \x03(\x0b\x32\x16.pvalue.ParameterValue\x12\r\n\x05group\x18\x02 \x01(\t\x12\x16\n\x0egenerationTime\x18\x03 \x01(\x03\x12\x0e\n\x06seqNum\x18\x04 \x01(\x05\"\x81\x01\n\nTimeSeries\x12)\n\x06sample\x18\x01 \x03(\x0b\x32\x19.pvalue.TimeSeries.Sample\x1aH\n\x06Sample\x12\x0c\n\x04time\x18\x01 \x01(\t\x12\x0b\n\x03\x61vg\x18\x02 \x01(\x01\x12\x0b\n\x03min\x18\x03 \x01(\x01\x12\x0b\n\x03max\x18\x04 \x01(\x01\x12\t\n\x01n\x18\x05 \x01(\x05*M\n\x11\x41\x63quisitionStatus\x12\x0c\n\x08\x41\x43QUIRED\x10\x00\x12\x10\n\x0cNOT_RECEIVED\x10\x01\x12\x0b\n\x07INVALID\x10\x02\x12\x0b\n\x07\x45XPIRED\x10\x03*o\n\x10MonitoringResult\x12\x0c\n\x08\x44ISABLED\x10\x00\x12\r\n\tIN_LIMITS\x10\x01\x12\t\n\x05WATCH\x10\x07\x12\x0b\n\x07WARNING\x10\n\x12\x0c\n\x08\x44ISTRESS\x10\r\x12\x0c\n\x08\x43RITICAL\x10\x10\x12\n\n\x06SEVERE\x10\x13*#\n\x0eRangeCondition\x12\x07\n\x03LOW\x10\x00\x12\x08\n\x04HIGH\x10\x01\x42\x14\n\x12org.yamcs.protobuf')
   ,
   dependencies=[yamcs_pb2.DESCRIPTOR,mdb_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -51,8 +51,8 @@ _ACQUISITIONSTATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=736,
-  serialized_end=813,
+  serialized_start=1047,
+  serialized_end=1124,
 )
 _sym_db.RegisterEnumDescriptor(_ACQUISITIONSTATUS)
 
@@ -76,70 +76,53 @@ _MONITORINGRESULT = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='WATCH_LOW', index=3, number=8,
+      name='WARNING', index=3, number=10,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='WATCH_HIGH', index=4, number=9,
+      name='DISTRESS', index=4, number=13,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='WARNING', index=5, number=10,
+      name='CRITICAL', index=5, number=16,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='WARNING_LOW', index=6, number=11,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='WARNING_HIGH', index=7, number=12,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='DISTRESS', index=8, number=13,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='DISTRESS_LOW', index=9, number=14,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='DISTRESS_HIGH', index=10, number=15,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='CRITICAL', index=11, number=16,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='CRITICAL_LOW', index=12, number=17,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='CRITICAL_HIGH', index=13, number=18,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='SEVERE', index=14, number=19,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='SEVERE_LOW', index=15, number=20,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='SEVERE_HIGH', index=16, number=21,
+      name='SEVERE', index=6, number=19,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=816,
-  serialized_end=1100,
+  serialized_start=1126,
+  serialized_end=1237,
 )
 _sym_db.RegisterEnumDescriptor(_MONITORINGRESULT)
 
 MonitoringResult = enum_type_wrapper.EnumTypeWrapper(_MONITORINGRESULT)
+_RANGECONDITION = _descriptor.EnumDescriptor(
+  name='RangeCondition',
+  full_name='pvalue.RangeCondition',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='LOW', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='HIGH', index=1, number=1,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1239,
+  serialized_end=1274,
+)
+_sym_db.RegisterEnumDescriptor(_RANGECONDITION)
+
+RangeCondition = enum_type_wrapper.EnumTypeWrapper(_RANGECONDITION)
 ACQUIRED = 0
 NOT_RECEIVED = 1
 INVALID = 2
@@ -147,20 +130,12 @@ EXPIRED = 3
 DISABLED = 0
 IN_LIMITS = 1
 WATCH = 7
-WATCH_LOW = 8
-WATCH_HIGH = 9
 WARNING = 10
-WARNING_LOW = 11
-WARNING_HIGH = 12
 DISTRESS = 13
-DISTRESS_LOW = 14
-DISTRESS_HIGH = 15
 CRITICAL = 16
-CRITICAL_LOW = 17
-CRITICAL_HIGH = 18
 SEVERE = 19
-SEVERE_LOW = 20
-SEVERE_HIGH = 21
+LOW = 0
+HIGH = 1
 
 
 
@@ -228,37 +203,51 @@ _PARAMETERVALUE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='acquisitionTimeUTC', full_name='pvalue.ParameterValue.acquisitionTimeUTC', index=8,
+      name='rangeCondition', full_name='pvalue.ParameterValue.rangeCondition', index=8,
+      number=9, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='acquisitionTimeUTC', full_name='pvalue.ParameterValue.acquisitionTimeUTC', index=9,
       number=11, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='generationTimeUTC', full_name='pvalue.ParameterValue.generationTimeUTC', index=9,
+      name='generationTimeUTC', full_name='pvalue.ParameterValue.generationTimeUTC', index=10,
       number=12, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='expirationTime', full_name='pvalue.ParameterValue.expirationTime', index=10,
+      name='expirationTime', full_name='pvalue.ParameterValue.expirationTime', index=11,
       number=23, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\030\001'))),
     _descriptor.FieldDescriptor(
-      name='expirationTimeUTC', full_name='pvalue.ParameterValue.expirationTimeUTC', index=11,
+      name='expirationTimeUTC', full_name='pvalue.ParameterValue.expirationTimeUTC', index=12,
       number=24, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\030\001'))),
     _descriptor.FieldDescriptor(
-      name='alarmRange', full_name='pvalue.ParameterValue.alarmRange', index=12,
+      name='alarmRange', full_name='pvalue.ParameterValue.alarmRange', index=13,
       number=25, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='expireMillis', full_name='pvalue.ParameterValue.expireMillis', index=14,
+      number=26, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -274,7 +263,65 @@ _PARAMETERVALUE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=49,
-  serialized_end=487,
+  serialized_end=565,
+)
+
+
+_PARAMETERSTATUS = _descriptor.Descriptor(
+  name='ParameterStatus',
+  full_name='pvalue.ParameterStatus',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='acquisitionStatus', full_name='pvalue.ParameterStatus.acquisitionStatus', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='monitoringResult', full_name='pvalue.ParameterStatus.monitoringResult', index=1,
+      number=2, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='rangeCondition', full_name='pvalue.ParameterStatus.rangeCondition', index=2,
+      number=3, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='alarmRange', full_name='pvalue.ParameterStatus.alarmRange', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='expireMillis', full_name='pvalue.ParameterStatus.expireMillis', index=4,
+      number=5, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=568,
+  serialized_end=798,
 )
 
 
@@ -324,8 +371,8 @@ _PARAMETERDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=489,
-  serialized_end=602,
+  serialized_start=800,
+  serialized_end=913,
 )
 
 
@@ -382,8 +429,8 @@ _TIMESERIES_SAMPLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=662,
-  serialized_end=734,
+  serialized_start=973,
+  serialized_end=1045,
 )
 
 _TIMESERIES = _descriptor.Descriptor(
@@ -411,8 +458,8 @@ _TIMESERIES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=605,
-  serialized_end=734,
+  serialized_start=916,
+  serialized_end=1045,
 )
 
 _PARAMETERVALUE.fields_by_name['id'].message_type = yamcs_pb2._NAMEDOBJECTID
@@ -420,15 +467,22 @@ _PARAMETERVALUE.fields_by_name['rawValue'].message_type = yamcs_pb2._VALUE
 _PARAMETERVALUE.fields_by_name['engValue'].message_type = yamcs_pb2._VALUE
 _PARAMETERVALUE.fields_by_name['acquisitionStatus'].enum_type = _ACQUISITIONSTATUS
 _PARAMETERVALUE.fields_by_name['monitoringResult'].enum_type = _MONITORINGRESULT
+_PARAMETERVALUE.fields_by_name['rangeCondition'].enum_type = _RANGECONDITION
 _PARAMETERVALUE.fields_by_name['alarmRange'].message_type = mdb_pb2._ALARMRANGE
+_PARAMETERSTATUS.fields_by_name['acquisitionStatus'].enum_type = _ACQUISITIONSTATUS
+_PARAMETERSTATUS.fields_by_name['monitoringResult'].enum_type = _MONITORINGRESULT
+_PARAMETERSTATUS.fields_by_name['rangeCondition'].enum_type = _RANGECONDITION
+_PARAMETERSTATUS.fields_by_name['alarmRange'].message_type = mdb_pb2._ALARMRANGE
 _PARAMETERDATA.fields_by_name['parameter'].message_type = _PARAMETERVALUE
 _TIMESERIES_SAMPLE.containing_type = _TIMESERIES
 _TIMESERIES.fields_by_name['sample'].message_type = _TIMESERIES_SAMPLE
 DESCRIPTOR.message_types_by_name['ParameterValue'] = _PARAMETERVALUE
+DESCRIPTOR.message_types_by_name['ParameterStatus'] = _PARAMETERSTATUS
 DESCRIPTOR.message_types_by_name['ParameterData'] = _PARAMETERDATA
 DESCRIPTOR.message_types_by_name['TimeSeries'] = _TIMESERIES
 DESCRIPTOR.enum_types_by_name['AcquisitionStatus'] = _ACQUISITIONSTATUS
 DESCRIPTOR.enum_types_by_name['MonitoringResult'] = _MONITORINGRESULT
+DESCRIPTOR.enum_types_by_name['RangeCondition'] = _RANGECONDITION
 
 ParameterValue = _reflection.GeneratedProtocolMessageType('ParameterValue', (_message.Message,), dict(
   DESCRIPTOR = _PARAMETERVALUE,
@@ -436,6 +490,13 @@ ParameterValue = _reflection.GeneratedProtocolMessageType('ParameterValue', (_me
   # @@protoc_insertion_point(class_scope:pvalue.ParameterValue)
   ))
 _sym_db.RegisterMessage(ParameterValue)
+
+ParameterStatus = _reflection.GeneratedProtocolMessageType('ParameterStatus', (_message.Message,), dict(
+  DESCRIPTOR = _PARAMETERSTATUS,
+  __module__ = 'pvalue_pb2'
+  # @@protoc_insertion_point(class_scope:pvalue.ParameterStatus)
+  ))
+_sym_db.RegisterMessage(ParameterStatus)
 
 ParameterData = _reflection.GeneratedProtocolMessageType('ParameterData', (_message.Message,), dict(
   DESCRIPTOR = _PARAMETERDATA,
@@ -462,4 +523,8 @@ _sym_db.RegisterMessage(TimeSeries.Sample)
 
 DESCRIPTOR.has_options = True
 DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\022org.yamcs.protobuf'))
+_PARAMETERVALUE.fields_by_name['expirationTime'].has_options = True
+_PARAMETERVALUE.fields_by_name['expirationTime']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\030\001'))
+_PARAMETERVALUE.fields_by_name['expirationTimeUTC'].has_options = True
+_PARAMETERVALUE.fields_by_name['expirationTimeUTC']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\030\001'))
 # @@protoc_insertion_point(module_scope)

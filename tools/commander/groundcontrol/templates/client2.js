@@ -5,7 +5,17 @@
 //Tools
 var DEBUG = false;
 var ERROR = true;
-var INFO = false;
+var INFO = true;
+
+function _base64ToArrayBuffer(base64) {
+    var binary_string =  window.atob(base64);
+    var len = binary_string.length;
+    var bytes = new Uint8Array( len );
+    for (var i = 0; i < len; i++)        {
+        bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
 
 function replaceAll(str, find, replace) {
             if (typeof str !='string'||typeof find !='string'||typeof replace !='string'){
@@ -141,11 +151,13 @@ var Session_Maintainance = function(){
         this.websocket = new WebSocket(this.ws_scheme+'://localhost:8000/session');
     }
     var self = this;
+    this.instance_name = null;
     this.subscribers = [];
     this.queuedSubscribers = [];
     this.allSubscibers = [];
     this.activeSubscribers = [];
     this.toUnsubscribe= [];
+    this.count=0;
 
 
 
@@ -163,6 +175,8 @@ var Session_Maintainance = function(){
 
 }
 Session_Maintainance.prototype = {
+
+
 
     /*transmitCurrentInstance*/
     transmitCurrentInstance: function(message){
@@ -203,6 +217,7 @@ Session_Maintainance.prototype = {
 
             log('INFO','Message sent.','transmitCurrentInstance');
             socket.send(JSON.stringify({"op":"bind_instance","msg":message}));
+            //this.instance_name=message;
             //console.log(socket);
             //console.log(this.websocket2);
             //console.log(message);
@@ -214,6 +229,7 @@ Session_Maintainance.prototype = {
 
 
         var socket = this.websocket;
+        var c = this.count;
         var message = "";
         var self = this;
         self.allSubscibers.push(msgObj)
@@ -267,28 +283,96 @@ Session_Maintainance.prototype = {
             log('INFO','Message queued.','subscribeTelemetry');
             this.queuedSubscribers.push({'message':message, 'callback':cb});
         }
-        var wsr = null;
+        //var pb = dcodeIO.P
+        var wssm=null
+        var wsrd=null
+        var wssd=null
+        var wsed=null
+        var psr=null
+        var ci =null
+
+
         protobuf.load("/static/proto/web.proto",function(err,root){
 
             console.log(err);
-            wsr = root.lookupType("web.WebSocketServerMessage");
+            wssm = root.lookupType("web.WebSocketServerMessage");
+            /*wsrd = wssm.lookupType("web.WebSocketReplyData");
+            wssd = wssm.lookupType("web.WebSocketSubscriptionData");
+            wsed = wssm.lookupType("web.WebSocketExceptionData");
+            psr = wssm.lookupType("web.ParameterSubscriptionResponse");
+            ci = wssm.lookupType("web.ConnectionInfo");*/
             console.log('success');
 
             socket.onmessage = function (message2){
 
-                console.log(message2);
-                var obj = wsr.toObject(atob(message2.data), {
+
+                var obj  = wssm.toObject(atob(message2.data), {
                     enums: String,  // enums as string names
                     longs: String,  // longs as strings (requires long.js)
                     bytes: String,  // bytes as base64 encoded strings
                     defaults: true, // includes default values
                     arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
                     objects: true,  // populates empty objects (map fields) even if defaults=false
+                    oneofs: true    // includes virtual oneof fields set to the present field's name
                 });
-                //console.log(atob(message2.data))
+                /*
+                var obj1 = wsrd.toObject(atob(message2.data), {
+                    enums: String,  // enums as string names
+                    longs: String,  // longs as strings (requires long.js)
+                    bytes: String,  // bytes as base64 encoded strings
+                    defaults: true, // includes default values
+                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
+                    objects: true,  // populates empty objects (map fields) even if defaults=false
+                    oneofs: true    // includes virtual oneof fields set to the present field's name
+                });
+                var obj2 = wssd.toObject(atob(message2.data), {
+                   enums: String,  // enums as string names
+                    longs: String,  // longs as strings (requires long.js)
+                    bytes: String,  // bytes as base64 encoded strings
+                    defaults: true, // includes default values
+                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
+                    objects: true,  // populates empty objects (map fields) even if defaults=false
+                    oneofs: true    // includes virtual oneof fields set to the present field's name
+                });
+                var obj3 = wsed.toObject(atob(message2.data), {
+                   enums: String,  // enums as string names
+                    longs: String,  // longs as strings (requires long.js)
+                    bytes: String,  // bytes as base64 encoded strings
+                    defaults: true, // includes default values
+                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
+                    objects: true,  // populates empty objects (map fields) even if defaults=false
+                    oneofs: true    // includes virtual oneof fields set to the present field's name
+                 });
+                var obj4 = psr.toObject(atob(message2.data), {
+                    enums: String,  // enums as string names
+                    longs: String,  // longs as strings (requires long.js)
+                    bytes: String,  // bytes as base64 encoded strings
+                    defaults: true, // includes default values
+                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
+                    objects: true,  // populates empty objects (map fields) even if defaults=false
+                    oneofs: true    // includes virtual oneof fields set to the present field's name
+                });
+                var obj5 = ci.toObject(atob(message2.data),{
+                    enums: String,  // enums as string names
+                    longs: String,  // longs as strings (requires long.js)
+                    bytes: String,  // bytes as base64 encoded strings
+                    defaults: true, // includes default values
+                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
+                    objects: true,  // populates empty objects (map fields) even if defaults=false
+                    oneofs: true    // includes virtual oneof fields set to the present field's name
+                });*/
+                //console.log(_base64ToArrayBuffer(message2.data))
                 log('INFO','Message received.','subscribeTelemetry');
+                c = c+1
+                console.log('COUNT : ',c,'   OBJ : ',obj);/*
+                console.log(obj1);
+                console.log(obj2);
+                console.log(obj3);
+                console.log(obj4);
+                console.log(obj5);*/
 
-                console.log(obj);
+
+
 
                 var fixedDataString = message2.data.replace(/\'/g, '"')
                 fixedDataString = fixedDataString.replace(new RegExp('True', 'g'),'true');
@@ -695,10 +779,11 @@ var ADSB = function() {
         this.video_subscribers = {};
         var self = this;
 
+
         this.vid_subc.onopen = function (){
             log('DEBUG','Connection open.','getAdsbStream');
-            //self.vid_subc.send('INVOKE');//TODO
-            //log('INFO','Message Sent.','getAdsbStream');
+            self.vid_subc.send('INVOKE');//TODO
+            log('INFO','Message Sent.','getAdsbStream');
         }
 
         this.vid_subc.onclose = function(){
@@ -711,19 +796,33 @@ var ADSB = function() {
 }
 ADSB.prototype = {
 
-    getAdsbStream(cb){
+    getAdsb:function(cb){
         var socket = this.vid_subc;
+        var msg_count = 0;
+        socket.onmessage = function (msg){
 
-        socket.onmessage = function (event){
+            //console.log(msg);
+            msg_count += 1;
             log('INFO','Message received.','getAdsbStream');
-            cosole.log(event)
-            //cb(event);
-        }
-        //if (socket.readyState == WebSocket.OPEN) {
-        //  socket.send('INVOKE');
-        //  log('INFO','Message Sent.','getVideoStream');
-        //};
+            //console.log('client2.js ---  ',msg)
+            var adsb_package = {};
+            adsb_package.aircraft = JSON.parse(msg.data);
+            adsb_package.messages = msg_count;
+            adsb_package.now = getDate('s');
+            cb(adsb_package);
 
+        }
+
+
+
+    },
+    killAdsb:function(){
+        var socket = this.vid_subc;
+        for(var i=0;i<20;i++){
+            socket.send('KILL');
+            console.log('sent kill adsb');
+            //socket.close();
+        }
 
     },
 
@@ -838,7 +937,7 @@ Session.prototype ={
 }
 
 
-
+/*
 console.log('___________________________');
 
 protobuf.load("/static/proto/web.proto",function(err,root){
@@ -870,7 +969,7 @@ console.log(obj);
 
 console.log('___________________________');
 
-
+*/
 
 if(typeof module != 'undefined') {
     module.exports.getDate = getDate;

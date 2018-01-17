@@ -7,13 +7,9 @@ block header
   | Pilot Display (Test)
 
 
-block header
-  i.fa-fw.fa.fa-signal
-  | Pilot Display (Test)
-
-block main 
+block main
   .row
-    article.col-xs-12.col-sm-12.col-md-6.col-lg-6
+    article.col-xs-12.col-sm-12.col-md-6.col-lg-6(style='height: 500px;width: 800px;')
       #wid-map.jarviswidget.jarviswidget-color-blueDark(data-widget-editbutton='false',data-widget-colorbutton='false',data-widget-deletebutton='false')
         header
           span.widget-icon
@@ -24,18 +20,19 @@ block main
             input.form-control(type='text')
           .widget-body
             style.
-              @import url(bower_components/cesium/Source/Widgets/widgets.css);
+              @import url(static/js/cesium/Source/Widgets/widgets.css);
             #cesiumContainer.fullSize
 
   script.
-    loadScript('node_modules/cesium/Build/CesiumUnminified/Cesium.js', function () {
-      
+
+    loadScript('static/js/cesium/Build/CesiumUnminified/Cesium.js', function () {
+      var adsb = new ADSB();
       Cesium.BingMapsApi.defaultKey = 'Anb5ZQS9_Qvje--nom_9ZKwQyQVnOOU04Fctd1uxMHnYoQKIcp1XFDrZuXN6evOQ';
       var viewer = new Cesium.Viewer('cesiumContainer');
       var AIRCRAFT = {};
-      var tracking_step_limit = 10;
+      var tracking_step_limit = 25;
       var outdated_seconds = 5;
-      
+
       function prepareRoute(lo,la,h,t,hex){
         var INSTANCE_VARIABLES = {lo:lo,la:la,h:h,t:t};
         if(!(hex in AIRCRAFT)){
@@ -55,21 +52,21 @@ block main
                 var key2 = addPoint(lo,la,h);
                 INSTANCE_VARIABLES.key=key2;
                 var last_element_key = T_QUE2[0].key;
-                removePoint(last_element_key);    
+                removePoint(last_element_key);
                 T_QUE2.shift();
                 T_QUE2.push(INSTANCE_VARIABLES);
                 AIRCRAFT[hex]=T_QUE2;
               }
               else{
                 var key3 = addPoint(lo,la,h);
-                INSTANCE_VARIABLES.key=key3;    
+                INSTANCE_VARIABLES.key=key3;
                 T_QUE2.push(INSTANCE_VARIABLES);
                 AIRCRAFT[hex]=T_QUE2;
               }
         }
       }
-      
-      
+
+
       function addPoint(lo,la,h) {
         var color = Cesium.Color.fromHsl((0.6 - (30 * 0.5)), 1.0, 0.5);
         var surfacePosition = Cesium.Cartesian3.fromDegrees(lo, la, 0);
@@ -81,9 +78,9 @@ block main
         polyline.followSurface = new Cesium.ConstantProperty(false);
         polyline.positions = new Cesium.ConstantProperty([surfacePosition, heightPosition]);
         var ENTITY = viewer.entities.add({polyline : polyline});
-        return ENTITY.id;    
+        return ENTITY.id;
       }
-      
+
       function cleanPoints(current_time){
         for(var k in AIRCRAFT){
         var T_QUE3 = AIRCRAFT[k];
@@ -97,8 +94,8 @@ block main
           }
         }
       }
-      
-      
+
+
       function addPointOld(lo,la) {
         viewer.entities.add({
             position : Cesium.Cartesian3.fromDegrees(lo, la),
@@ -108,20 +105,21 @@ block main
             }
         });
       }
-      
+
       function removePoint(entityid){
         var response = viewer.entities.removeById(entityid);
         return response;
       }
 
-      
+
       function executeQuery(){
-        session.getADSBJson(function(adsb) {
+
+        adsb.getAdsb(function(data) {
           //variables
-          console.log(adsb)
-          time_stamp = adsb.now
-          message_counter = adsb.messages
-          aircraft_list = adsb.aircraft
+          //console.log(data)
+          var time_stamp = data.now
+          var message_counter = data.messages
+          var aircraft_list = data.aircraft
           for(i=0; i<aircraft_list.length;i++){
             instance = aircraft_list[i]
             try{
@@ -135,7 +133,7 @@ block main
               }catch(err1){
                 console.log("INTERTNAL ERROR: [NOT ABLE TO CLEAR POINTS] "+err1)
               }
-              console.log(typeof(latitude)+"  "+typeof(longitude))
+              //console.log(typeof(latitude)+"  "+typeof(longitude))
               if (isNaN(latitude) && isNaN(logitude) && isNaN(height)){
                 console.log("skipped")
               }else{
@@ -144,14 +142,19 @@ block main
 
             }
             catch(err){
-            
+
             console.log("INTERTNAL ERROR: "+err)
             }
           }
-            console.log(adsb);
-            setTimeout(executeQuery,1000)
+            //console.log(data);
+            //setTimeout(executeQuery,1000)
         });
       }
-      
+
+      //executeQuery();
       $(document).ready(function(){setTimeout(executeQuery,1000)});
+      window.onhashchange= function(){
+        console.log('gone')
+        adsb.killAdsb();
+      };
     });

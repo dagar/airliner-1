@@ -21,7 +21,9 @@ channel_routing = [
                     route(u'websocket.receive', getInstanceList, path='/inst'),
                     route(u'websocket.disconnect', inst_disconnect, path='/inst'),
 
-
+                    route(u'websocket.connect', adsb_connect, path='/adsb'),
+                    route(u'websocket.receive', getAdsb, path='/adsb'),
+                    route(u'websocket.disconnect', adsb_disconnect, path='/adsb'),
 
                     route(u'websocket.connect', dir_connect, path='/dir'),
                     route(u'websocket.receive', directoryListing, path='/dir'),

@@ -16,7 +16,7 @@ from multiprocessing import Process
 from pprint import pprint
 import inspect
 import time,random,redis_lock
-from groundcontrol.proto import web_pb2,pvalue_pb2
+from static.proto import web_pb2,pvalue_pb2
 ## datastores
 import redis,sqlite3
 import sys
@@ -34,13 +34,13 @@ address = '127.0.0.1'#redis_cache.get('address')## Initialize address to pyliner
 port = 8090#redis_cache.get('port')## Initialize port to pyliner/yamcs defined in launch_config.json
 video_socket = None## An empty variable which will be later used to store the video-udp socket object.
 video_port = 3001#int(redis_cache.get('video_port'))## Initialize video port to pyliner/yamcs defined in launch_config.json.
-
+adsb_port =8080
 sock_map = {}## A dictionary to store websockets which connect backend, mapped with unique id in message object.
 proc_map = {}## A dictionary to store processes which push telemetry to frontend, mapped with unique id in message object.
 test_sampling_frequency = (1.0/10)## The number of samples collected everytime the `push` function yields data
 sock_map_e = {}## A dictionary to store websockets which connect backend, mapped with unique id in message object.
 proc_map_e = {}## A dictionary to store processes which push telemetry to frontend, mapped with unique id in message object.
-
+adsb_proc = []
 
 
 
@@ -93,15 +93,19 @@ class session_maintainance(BaseConsumer):
                     #print self.inst,len(self.inst)
                     #self.r.set(my_instance, json.dumps(loc_cache))
 
-            psr = web_pb2.WebSocketClientMessage()
-            sr = pvalue_pb2.ParameterValue()
-            psr.protocolVersion = 1
-            psr.sequenceNumber = 0
-            psr.resource = "parameter"
-            psr.operation = "subscribe"
+            psr = web_pb2.ParameterSubscriptionRequest()
+            id = psr.id.add()
+            id.name = str(tk.byteify(tlm_obj['tlm'][0]['name']))
+            #sr = pvalue_pb2.ParameterValue()
+            wscm = web_pb2.WebSocketClientMessage()
+            wscm.protocolVersion = 1
+            wscm.sequenceNumber = 0
+            wscm.resource = "parameter"
+            wscm.operation = "subscribe"
+            wscm.data = psr.SerializeToString()
             #id = sr.id.add()
-            sr.id.name = str(tk.byteify(tlm_obj['tlm'][0]['name']))
-            psr.data = sr.SerializeToString()
+
+            #psr.data = sr.SerializeToString()
             #temp = '{"parameter":"subscribe", "data":{"list":' + str(tk.byteify(tlm_obj['tlm'])) + '}}'
             #temp = temp.replace("\'", "\"")
             #to_send = '[1,1,0,' + str(temp) + ']'
@@ -109,7 +113,7 @@ class session_maintainance(BaseConsumer):
                 try:
                     ws = create_connection('ws://' + str(address) + ':' + str(port) + '/' + my_instance + '/_websocket')
                     sock_map[client_reply_channel] = ws
-                    sock_map[client_reply_channel].send_binary(psr.SerializeToString())
+                    sock_map[client_reply_channel].send_binary(wscm.SerializeToString())
                     #sock_map[client_reply_channel].send(to_send)
                     process = Process(target=self.push,args=(sock_map[client_reply_channel],my_instance,client_reply_channel))
                     process.start()
@@ -120,7 +124,7 @@ class session_maintainance(BaseConsumer):
                     pass
             else:
                 try:
-                    sock_map[client_reply_channel].send_binary(psr.SerializeToString())
+                    sock_map[client_reply_channel].send_binary(wscm.SerializeToString())
                     logd('Client %s is now [SUBSCRIBE] to %s bound to instance %s',client_reply_channel,obj['msg'],message.channel_session['instance'])
                 except Exception, err:
                     ## TODO: safely log error, unit test required
@@ -197,8 +201,13 @@ class session_maintainance(BaseConsumer):
         while True:
             try:
                 result = websocket_obj.recv()
-                print result
-                Group(inst_name).send({'text': base64.b64encode(result)})
+                wrd = web_pb2.WebSocketServerMessage()
+                wrd.ParseFromString(result)
+                if str(wrd.type) != '2':
+                    print '--------'
+                    print  wrd,'\n',result,'\n',type(wrd),'\n',wrd.type,'\n',wrd.reply
+                    print '--------'
+                    Group(inst_name).send({'text': base64.b64encode(result)})
 
             except Exception, err:
                 loge('Push error occured while trying to push messages to client. Error %s',err)
@@ -623,7 +632,7 @@ def VideoThroughUDP(msg_obj):
 
 
 # independent channels
-def inst_connect( message):
+def inst_connect(message):
     """!
     Accepts request and establishes a connection with client.
     @param message: connection request from client, this message will connection headers.
@@ -631,7 +640,7 @@ def inst_connect( message):
     """
     message.reply_channel.send({'accept': True})
 
-def inst_disconnect( message):
+def inst_disconnect(message):
     """!
     Accepts disconnection message and disconnects with client.
     @param message: disconnection request from client, this message will disconnection headers.
@@ -639,7 +648,7 @@ def inst_disconnect( message):
     """
     message.reply_channel.send({'close': True})
 
-def getInstanceList( message):
+def getInstanceList(message):
     """!
     This function is invoked by the client. Upon such an event, an instance list is requested from
     pyliner/yamcs which is forwarded to client.
@@ -682,6 +691,61 @@ def directoryListing(message):
     #test_db_wrapper(name, data,'DIR','obtain directory listing')
     message.reply_channel.send({'text': data})
     logi('Directory list under \' %s \' is sent.',name)
+
+def adsb_connect(message):
+    """!
+        Accepts request and establishes a connection with client.
+        @param message: connection request from client, this message will connection headers.
+        @return: void
+        """
+    message.reply_channel.send({'accept': True})
+
+def adsb_disconnect(message):
+    """!
+       Accepts disconnection message and disconnects with client.
+       @param message: disconnection request from client, this message will disconnection headers.
+       @return: void
+       """
+    message.reply_channel.send({'close': True})
+
+def getAdsb(message):
+
+    text = message.content['text']
+    if text == 'INVOKE':
+        process = Process(target=adsbPush, args=(message,))
+        process.start()
+        adsb_proc.append(process.pid)
+        logi('New adsb-push process has been [Created] with pid %s.', str(process.pid))
+    elif text == 'KILL':
+        for each in adsb_proc:
+            to_kill = psutil.Process(each)
+            to_kill.kill()
+            adsb_proc.remove(each)
+            logi('Adsb-push process has been [Killed] with pid %s.', str(each))
+
+def adsbPush(message):
+    """!
+    A non-busy forever loop pushes telemetry to client.
+    @param websocket_obj:  websocket object
+    @return: void
+    """
+    while True:
+        try:
+            response = urllib.urlopen('http://' + str(address) + ':' + str(adsb_port) + '/dump1090/data.json')
+            data = json.loads(json.dumps(response.read()))
+            message.reply_channel.send({'text': data})
+            logi('ads-b packet is sent.')
+
+        except Exception, err:
+            loge('Adsb-push error occured while trying to push messages to client. Error %s', err)
+            break
+        ## avoids busy-while-loop
+        time.sleep(1)
+
+
+
+
+
 
 
 class MyCache:

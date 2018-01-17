@@ -1,0 +1,55 @@
+syntax="proto2";
+
+package websock;
+
+message data {
+  required string dt = 1;
+
+  message DATA {
+
+    message PARAMETER {
+
+      message ID {
+        required string name = 1;
+      }
+
+      required ID id = 1;
+
+      message RAWVALUE {
+        required string type = 1;
+        required double uint32Value = 2;
+      }
+
+      required RAWVALUE rawValue = 2;
+
+      message ENGVALUE {
+        required string type = 1;
+        required double uint32Value = 2;
+      }
+
+      required ENGVALUE engValue = 3;
+      required double acquisitionTime = 4;
+      required double generationTime = 5;
+      required string acquisitionStatus = 6;
+      required bool processingStatus = 7;
+      required string monitoringResult = 8;
+      required string acquisitionTimeUTC = 9;
+      required string generationTimeUTC = 10;
+      required double expirationTime = 11;
+      required string expirationTimeUTC = 12;
+
+      message ALARMRANGE {
+        required string level = 1;
+        required double minInclusive = 2;
+        required double maxInclusive = 3;
+      }
+
+      repeated ALARMRANGE alarmRange = 13;
+      required double expireMillis = 14;
+    }
+
+    repeated PARAMETER parameter = 1;
+  }
+
+  required DATA data = 2;
+}

@@ -1,0 +1,12 @@
+[
+  { "local": "alarms.proto"},
+  { "local": "archive.proto"},
+  { "local": "commanding.proto"},
+  { "local": "mdb.proto"},
+  { "local": "pvalue.proto"},
+  { "local": "rest.proto"},
+  { "local": "web.proto"},
+  { "local": "yamcs.proto"},
+  { "local": "yamcsManagement.proto"},
+
+]

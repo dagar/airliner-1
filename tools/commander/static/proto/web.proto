@@ -1,3 +1,5 @@
+syntax="proto2";
+
 package web;
 option java_package = "org.yamcs.protobuf";
 
@@ -26,6 +28,9 @@ message WebSocketServerMessage {
   message WebSocketReplyData {
     optional uint32 protocolVersion = 1;
     optional int32 sequenceNumber = 2; // allow for -1
+    optional string type = 3;
+    optional string message = 4;
+    optional bytes data = 5; // Structured data
   }
 
   message WebSocketExceptionData {
@@ -36,9 +41,7 @@ message WebSocketServerMessage {
     optional bytes data = 5; // Structured exception data
   }
 
-  // Currently hard-coding the set of available data types for easier client processing, but
-  // could in the future just make it bytes just like with the requests.
-  // oh, and protobuf3 plans to support an Any-type.
+  // Could use protobuf3 Any-type some day.
   message WebSocketSubscriptionData {
     optional uint32 sequenceNumber = 1;
     optional yamcs.ProtoDataType type = 2;
@@ -54,6 +57,10 @@ message WebSocketServerMessage {
     optional yamcsManagement.LinkEvent linkEvent = 12;
     optional commanding.CommandQueueInfo commandQueueInfo = 13;
     optional commanding.CommandQueueEvent commandQueueEvent = 14;
+    optional yamcs.TmPacketData tmPacket = 15;
+    optional ConnectionInfo connectionInfo = 16;
+    
+    optional WebSocketExtensionData extensionData = 100;
   }
 
   optional MessageType type = 1;
@@ -62,8 +69,50 @@ message WebSocketServerMessage {
   optional WebSocketSubscriptionData data = 4;
 }
 
+// Escape hatch for providing non-core Yamcs data over web socket
+message WebSocketExtensionData {
+  optional uint32 type = 1;
+  optional bytes data = 2;
+}
+
 // Generic holder for an exception
 message RestExceptionMessage {
   optional string type = 1;
   optional string msg = 2;
+  extensions 100 to 200;
+}
+
+message ParameterSubscriptionRequest {
+  repeated yamcs.NamedObjectId id = 1;
+  //if set to true, an error message will be sent back if any parameter from the list above is invalid
+  // by default is false
+  optional bool abortOnInvalid = 2;
+
+  // if set to true, send parameter updates when parameters expire.
+  // the parameter will have the same value and timestamp like the previous sent one, but the acquisition status will be set to EXPIRED (instead of ACQUIRED)
+  //by default is false
+  optional bool updateOnExpiration = 3;
+
+  //if set to true (default), send a first batch of the parameters from cache if available
+  // otherwise just wait for the parameters to be updated
+  optional bool sendFromCache = 4;
+
+//Hack to allow the old subscribe with NamedObjectList to work when json is used.
+// When protobuf is used, the "id" will work since it uses the same field id (1) with the "list" from NamedObjectList
+// remove this field when we are sure nobody uses the old method
+  repeated yamcs.NamedObjectId list = 10000 [deprecated=true]; 
+}
+
+message ParameterSubscriptionResponse {
+  repeated yamcs.NamedObjectId valid = 1;
+  repeated yamcs.NamedObjectId invalid = 2;
+}
+
+
+
+//sent via the websocket with information about connected client
+message ConnectionInfo {
+   optional int32 clientId = 1;   
+   optional yamcsManagement.YamcsInstance instance = 2;
+   optional yamcsManagement.ProcessorInfo processor = 3;
 }
