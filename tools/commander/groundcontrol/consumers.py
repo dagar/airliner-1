@@ -41,6 +41,7 @@ test_sampling_frequency = (1.0/10)## The number of samples collected everytime t
 sock_map_e = {}## A dictionary to store websockets which connect backend, mapped with unique id in message object.
 proc_map_e = {}## A dictionary to store processes which push telemetry to frontend, mapped with unique id in message object.
 adsb_proc = []
+vid_proc = []
 
 
 
@@ -584,49 +585,6 @@ def push(websocket_obj,message_obj):
             print result
         ## avoids busy-while-loop
         time.sleep(0.01)
-def vid_connect( message):
-    """!
-    Accepts request and establishes a connection with client.
-    @param message: connection request from client, this message will connection headers.
-    @return: void
-    """
-    message.reply_channel.send({'accept': True})
-def vid_disconnect( message):
-    """!
-    Accepts disconnection message and disconnects with client.
-    @param message: disconnection request from client, this message will disconnection headers.
-    @return: void
-    """
-    message.reply_channel.send({'close': True})
-def getVideo( message):
-    """!
-    Invokes a continuous looping function which will push video images to client.
-    @param message: invoke message from client.
-    @return: void
-    """
-    name = message.content['text']
-    VideoThroughUDP(message)
-def VideoThroughUDP(msg_obj):
-    """!
-    Binds with UDP port and forwards image data as and when received from pyliner/yamcs.
-    @param msg_obj: ivoke message passed as parameter in `getVideo' function.
-    @return: void
-    """
-    ## UDP
-    video_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-    video_socket.bind(('', video_port))
-    video_frame_counter= 0
-    
-    while True:
-        ## buffer size is 65527 bytes
-        data, addr = video_socket.recvfrom(65527)
-        b64_img = base64.b64encode(data)
-        video_frame_counter = video_frame_counter + 1
-        msg_obj.reply_channel.send({'text': b64_img})
-        #yield b64_img
-
-        ## avoids busy-while-loop
-        time.sleep(0.01)
 
 
 
@@ -711,17 +669,25 @@ def adsb_disconnect(message):
 def getAdsb(message):
 
     text = message.content['text']
+    client_reply_channel = message.content['reply_channel']
     if text == 'INVOKE':
-        process = Process(target=adsbPush, args=(message,))
-        process.start()
-        adsb_proc.append(process.pid)
-        logi('New adsb-push process has been [Created] with pid %s.', str(process.pid))
+        if len(Group('adsb').channel_layer.group_channels('adsb'))!=0:
+            Group('adsb').add(message.reply_channel)
+        else:
+            process = Process(target=adsbPush, args=(message,))
+            process.start()
+            adsb_proc.append(process.pid)
+            logi('New adsb-push process has been [Created] with pid %s.', str(process.pid))
     elif text == 'KILL':
-        for each in adsb_proc:
-            to_kill = psutil.Process(each)
-            to_kill.kill()
-            adsb_proc.remove(each)
-            logi('Adsb-push process has been [Killed] with pid %s.', str(each))
+        if len(Group('adsb').channel_layer.group_channels('adsb')) > 1 :
+            #print client_reply_channel
+            Group('adsb').discard(message.reply_channel)
+        elif client_reply_channel in Group('adsb').channel_layer.group_channels('adsb'):
+            for each in adsb_proc:
+                to_kill = psutil.Process(each)
+                to_kill.kill()
+                adsb_proc.remove(each)
+                logi('Adsb-push process has been [Killed] with pid %s.', str(each))
 
 def adsbPush(message):
     """!
@@ -733,14 +699,103 @@ def adsbPush(message):
         try:
             response = urllib.urlopen('http://' + str(address) + ':' + str(adsb_port) + '/dump1090/data.json')
             data = json.loads(json.dumps(response.read()))
-            message.reply_channel.send({'text': data})
-            logi('ads-b packet is sent.')
+            Group('adsb').send({'text': data})
+            #message.reply_channel.send({'text': data})
+            logd('ads-b packet is sent.')
 
         except Exception, err:
             loge('Adsb-push error occured while trying to push messages to client. Error %s', err)
             break
         ## avoids busy-while-loop
         time.sleep(1)
+
+def vid_connect( message):
+    """!
+    Accepts request and establishes a connection with client.
+    @param message: connection request from client, this message will connection headers.
+    @return: void
+    """
+    message.reply_channel.send({'accept': True})
+
+def vid_disconnect( message):
+    """!
+    Accepts disconnection message and disconnects with client.
+    @param message: disconnection request from client, this message will disconnection headers.
+    @return: void
+    """
+    message.reply_channel.send({'close': True})
+
+def getVideo(message):
+    """!
+    Invokes a continuous looping function which will push video images to client.
+    @param message: invoke message from client.
+    @return: void
+    """
+    text = message.content['text']
+
+    client_reply_channel = message.content['reply_channel']
+    print text,'   ',client_reply_channel
+    if text == 'INVOKE':
+        if len(Group('video').channel_layer.group_channels('video'))!=0:
+            Group('video').add(message.reply_channel)
+        else:
+            process = Process(target=VideoThroughUDP, args=(message,))
+            process.start()
+            Group('video').add(message.reply_channel)
+            vid_proc.append(process.pid)
+            logi('New video-push process has been [Created] with pid %s.', str(process.pid))
+    elif text == 'KILL':
+        #print len(Group('video').channel_layer.group_channels('video'))
+        #print (Group('video').channel_layer.group_channels('video'))
+        #print vid_proc
+        if len(Group('video').channel_layer.group_channels('video')) > 1 :
+            #print client_reply_channel
+            Group('video').discard(message.reply_channel)
+
+
+        elif client_reply_channel in Group('video').channel_layer.group_channels('video'):
+
+            for each in vid_proc:
+                to_kill = psutil.Process(each)
+                to_kill.kill()
+                vid_proc.remove(each)
+                Group('video').discard(message.reply_channel)
+                logi('video-push process has been [Killed] with pid %s.', str(each))
+
+    #name = message.content['text']
+    #VideoThroughUDP(message)
+
+
+def VideoThroughUDP(msg_obj):
+    """!
+    Binds with UDP port and forwards image data as and when received from pyliner/yamcs.
+    @param msg_obj: ivoke message passed as parameter in `getVideo' function.
+    @return: void
+    """
+    ## UDP
+    video_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    video_socket.bind(('', video_port))
+    video_frame_counter = 0
+
+    while True:
+        try:
+            ## buffer size is 65527 bytes
+            data, addr = video_socket.recvfrom(65527)
+            b64_img = base64.b64encode(data)
+            video_frame_counter = video_frame_counter + 1
+            Group('video').send({'text': b64_img})
+            #msg_obj.reply_channel.send({'text': b64_img})
+            #logi('video frame #%s is sent.', video_frame_counter)
+            #video_frame_counter = video_frame_counter + 1
+            # yield b64_img
+
+
+        except Exception, err:
+            loge('Video-push error occured while trying to push messages to client. Error %s', err)
+            break
+        ## avoids busy-while-loop
+        time.sleep(0.01)
+
 
 
 
@@ -783,6 +838,7 @@ class MyCache:
                 self.redis_cache.set('number_of_workers', config['number_of_workers'])
                 self.redis_cache.set('mode', config['mode'])
                 self.redis_cache.set('app_path', config['app_path'])
+                #self.redis_cache.set('vid_clients', 0)  # TODO: REMOVE THIS
                 self.redis_cache.set('t_btn_cnt',0)#TODO: REMOVE THIS
 
                 ## clean test database, table

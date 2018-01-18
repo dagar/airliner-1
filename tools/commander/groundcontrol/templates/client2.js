@@ -837,15 +837,35 @@ ADSB.prototype = {
    Initializes web socket to receive video frames.*/
 //---------------------------------------------------------------------------------------------------------------
 var Video = function() {
+        this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+        this.vid_subc = new WebSocket(this.ws_scheme+'://' + window.location.host + '/video');
         this.video_subscribers = {};
         var self = this;
+
+
+        this.vid_subc.onopen = function (){
+            log('DEBUG','Connection open.','getAdsbStream');
+            //self.vid_subc.send('INVOKE');//TODO
+            //log('INFO','Message Sent.','getAdsbStream');
+        }
+
+        this.vid_subc.onclose = function(){
+            log('DEBUG','Connection closed.','getAdsbStream');
+        }
+        this.vid_subc.onerror = function(){
+            log('ERR','Connection closed.','getAdsbStream');
+        }
+
 }
 Video.prototype = {
 
-    getVideoStream(cb){
-        this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        var socket = new WebSocket(this.ws_scheme+'://' + window.location.host + '/video');
-
+    getVideoStream:function(cb){
+        var socket = this.vid_subc;
+        //this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+        //ar socket = new WebSocket(this.ws_scheme+'://' + window.location.host + '/video');
+        //console.log('hello888888888888888888888888888');
+        sleep(200);
+        socket.send('INVOKE');
         socket.onmessage = function (event){
             log('INFO','Message received.','getVideoStream');
             cb(event);
@@ -856,7 +876,7 @@ Video.prototype = {
         //  log('INFO','Message Sent.','getVideoStream');
         //};
 
-        socket.onopen = function (){
+        /*socket.onopen = function (){
             log('DEBUG','Connection open.','getVideoStream');
             socket.send('INVOKE');//TODO
             log('INFO','Message Sent.','getVideoStream');
@@ -868,8 +888,17 @@ Video.prototype = {
 
         socket.onerror = function(){
             log('ERR','Connection closed.','getVideoStream');
-        }
+        }*/
 
+
+    },
+    killVideo:function(){
+        var socket = this.vid_subc;
+        for(var i=0;i<20;i++){
+            socket.send('KILL');
+            console.log('sent kill video');
+            //socket.close();
+        }
 
     },
 
