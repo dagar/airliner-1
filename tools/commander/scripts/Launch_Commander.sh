@@ -48,9 +48,11 @@ echo
 
 if [[ $1 =~ $r0 ]] ; then
     echo "MODE : TRAIN"
+    WORKERS=1
     jq '.mode = 0'  launch_config.json > tmp.$$.json && mv tmp.$$.json launch_config.json
 elif [[ $1 =~ $r1 ]] ; then
     echo "MODE : TEST"
+    WORKERS=4
     jq '.mode = 1'  launch_config.json > tmp.$$.json && mv tmp.$$.json launch_config.json
 else
     echo "MODE : DEVELOPMENT"

@@ -12,20 +12,20 @@
 
 
 #cd tools/commander/scripts/
-./Launch_YAMCS_airliner.sh &
-sleep 60
-./Launch_Commander.sh 2 &
+#./Launch_YAMCS_airliner.sh &
+#sleep 60
+./Launch_Commander.sh 1 &
 
-sleep 20
+sleep 5
 cd ../
 cd groundcontrol/
 cd test-reports
 touch *.xml
 cd ../
-npm install
-./node_modules/.bin/mocha test --reporter mocha-junit-reporter --reporter-options mochaFile=./test-reports/client-results.xml
-py.test --junitxml ./test-reports/server-results.xml ./test/unittests.py
-py.test --junitxml ./test-reports/gui-results.xml ./test/uitests.py
+#npm install
+#./node_modules/.bin/mocha test --reporter mocha-junit-reporter --reporter-options mochaFile=./test-reports/client-results.xml
+py.test --junitxml ./test-reports/server-results.xml ./test/consumer_integration_test.py
+#py.test --junitxml ./test-reports/gui-results.xml ./test/uitests.py
 
 sleep 20
 echo '###################INTENTIONAL WATING####################'
@@ -34,6 +34,6 @@ cd ../
 cd scripts/
 
 
-./kill_YAMCS_airliner.sh
+#./kill_YAMCS_airliner.sh
 
 

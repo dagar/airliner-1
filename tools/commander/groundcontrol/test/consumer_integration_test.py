@@ -69,7 +69,6 @@ class Test_Toolkit(unittest.TestCase):
     def tearDownClass(cls):
         cls.db_conn.close()
 
-
 class Test_Instance(unittest.TestCase):
 
     @classmethod
@@ -140,84 +139,86 @@ class Test_Instance(unittest.TestCase):
             self.assertTrue(1)
         ch.no_f_rcv()
 
-
-
-
-
     @classmethod
     def tearDownClass(cls):
         cls.db_conn.close()
-"""
-class Test_Telemetry(unittest.TestCase):
-    @classmethod
-    #@unittest.skip("demonstrating skipping")
-    def setUpClass(cls):
 
-        cls._r = redis.StrictRedis(host='localhost', port=6379, db=0)
-        cls._mode = int(cls._r.get('mode'))
-        cls._db_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))#cls._r.get('app_path')
-        cls._number_of_workers = cls._r.get('number_of_workers')
-        cls._r.set('instance',cls._r.get('default_instance'))
-        cls._conn = sqlite3.connect(cls._db_path + '/test_database', timeout=5)
-        cls._ch = channel_plugin('ws://127.0.0.1:8000/tlm_s/')
+class Test_Telemetry(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        templc = launchConfig()
+        cls.lc_obj = templc.get()
+        cls.mode = cls.lc_obj['_applicationMode']
+        cls.app_path = cls.lc_obj['_applicationPath']
+        cls.application_port = cls.lc_obj['_daphnePort']
+
+        cls.db_conn = sqlite3.connect(cls.app_path + '/test_database', timeout=5)
+        cls.cursor = cls.db_conn.cursor()
+        cls.cursor.execute('SELECT input FROM TESTCASES WHERE mapping =\'SUBTLM\'')
+        cls.tlm_list_of_tuples = cls.cursor.fetchall()
+
+        cls.defaultInstance = cls.lc_obj['_defaultInstance']
+        cls._ch = channel_plugin('ws://localhost:'+str(cls.application_port)+'/session/')
         cls._sending_list =[]
 
     @classmethod
-    #@unittest.skip("demonstrating skipping")
     def tearDownClass(cls):
-        for each in range(int(cls._number_of_workers)):
-            cls._ch.send('USALL')
-        cls._conn.close()
+        for each in range(int(cls.lc_obj['_numberOfWorkers'])):
+            cls._ch.send(json.dumps({"op":"kill_all_tlm", "msg":"killmsg"}))
+        cls.db_conn.close()
+        cls._ch.no_f_rcv()
 
-    #@unittest.skip("demonstrating skipping")
-    def test_telemetry_subscription(cls):
 
-        cursor = cls._conn.cursor()
-        cursor.execute('SELECT input FROM TESTCASES WHERE mapping =\'SUBTLM\'')
-        tlm_list_of_tuples = cursor.fetchall()
+    def test_instance_binding(self):
+        self._ch.send(json.dumps({"op":"bind_instance","msg":"softsim"}))
+        self.assertTrue(1)
+        time.sleep(2)
+
+    #@unittest.skip("skipping telemetry_subscription")
+
+
+    def test_telemetry_subscription(self):
+        #tlm_list_of_tuples = self.cursor.fetchall()
         sub_names_sent =[]
         sub_names_recv = []
         c=0
-        for e in tlm_list_of_tuples:
-            name_sent = byteify(json.loads(byteify(e[0]))['tlm'][0])['name']
+        for e in self.tlm_list_of_tuples:
+            #print e
+            name_sent = json.loads(byteify((json.loads(e[0]))['msg']))['tlm'][0]['name']
             if name_sent not in sub_names_sent:
                 c+=1
-                cls._ch.send(e[0])
+                self._ch.send(json.dumps(byteify((json.loads(e[0])))))
                 sub_names_sent.append(name_sent)
             else:
                 continue
         while True:
-            c_actual = cls._ch.rcv()
+            c_actual = self._ch.rcv()
             list_of_params = eval(c_actual)['parameter']
             names = [byteify(e['id'])['name'] for e in list_of_params]
             for e in names:
                 if e not in sub_names_recv:
                     sub_names_recv.append(e)
             sub_names_sent = list(set(sub_names_sent))
-            #for every in sub_names_sent:
-                #print '-----------------------------',every
-            #for every in sub_names_recv:
-                #print every
-            #print len(sub_names_recv), '=?',len(sub_names_sent)
+            #print len(sub_names_sent) , '    :    ',len(sub_names_recv)
             if len(sub_names_sent) == len(sub_names_recv):
                 break
-        cls.assertTrue(set(sub_names_recv)==set(sub_names_sent))
+        self.assertTrue(set(sub_names_recv)==set(sub_names_sent))
 
     #@unittest.skip("demonstrating skipping")
-    def test_telemetry_unsubscription(cls): #TODO:Implement this method at client side.
+    def test_telemetry_unsubscription(self):
 
-        cursor = cls._conn.cursor()
-        cursor.execute('SELECT input FROM TESTCASES WHERE mapping =\'SUBTLM\'')
-        tlm_list_of_tuples = cursor.fetchall()
-        cls._sending_list = tlm_list_of_tuples
-        while len(cls._sending_list)!=0:
-            cls.send_unsubscription_signal(cls._sending_list)
-            #cls.send_unsubscription_signal(cls._sending_list)
-            #cls.send_unsubscription_signal(cls._sending_list)
+        #tlm_list_of_tuples = self.cursor.fetchall()
+        #for e in self.tlm_list_of_tuples:
+            #self._sending_list.append(byteify((json.loads(e[0]))['msg']))
+        self._sending_list = self.tlm_list_of_tuples
+        #print self.tlm_list_of_tuples, '\n',self._sending_list
+        while len(self._sending_list)!=0:
+            self.send_unsubscription_signal(self._sending_list)
             result = None
             with timeout(seconds=3):
                 try:
-                    result = cls._ch.rcv()
+                    result = self._ch.rcv()
                 except:
                     pass
             if result!=None:
@@ -226,58 +227,68 @@ class Test_Telemetry(unittest.TestCase):
                     name =  e1['id']
                     tlm = '{\'tlm\':['+str(byteify(name))+']}'
                     tlm = (json.dumps(eval(tlm)),)
-                    cls._sending_list.append(tlm)
-            #print len(cls._sending_list), '=?', 0
-        cls.assertTrue(cls._sending_list==[])
+                    self._sending_list.append([json.dumps({'msg': tlm[0], 'op': 'unsubscribe_tlm'})])
+        self.assertTrue(self._sending_list==[])
 
-    def send_unsubscription_signal(cls,l):
+    def send_unsubscription_signal(self,l):
         for e in l:
+            op = json.loads(e[0])
+            op['op']='unsubscribe_tlm'
             for i in range(5):
-                cls._ch.send('kill_tlm' + e[0])
-            cls._sending_list.remove(e)
+                self._ch.send(json.dumps(byteify(op)))
+            self._sending_list.remove(e)
 
 class  Test_Commanding(unittest.TestCase):
     @classmethod
     #@unittest.skip("demonstrating skipping")
     def setUpClass(cls):
-        cls._r = redis.StrictRedis(host='localhost', port=6379, db=0)
-        cls._mode = int(cls._r.get('mode'))
-        cls._db_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))#cls._r.get('app_path')
-        cls._number_of_workers = cls._r.get('number_of_workers')
-        cls._r.set('instance', cls._r.get('default_instance'))
-        cls._conn = sqlite3.connect(cls._db_path + '/test_database', timeout=5)
-        cls._ch = channel_plugin('ws://127.0.0.1:8000/cmd_i/')
-        cls._ch2 = channel_plugin('ws://127.0.0.1:8000/cmd_s/')
+        templc = launchConfig()
+        cls.lc_obj = templc.get()
+        cls.mode = cls.lc_obj['_applicationMode']
+        cls.app_path = cls.lc_obj['_applicationPath']
+        cls.application_port = cls.lc_obj['_daphnePort']
+
+        cls.db_conn = sqlite3.connect(cls.app_path + '/test_database', timeout=5)
+
+        cls.defaultInstance = cls.lc_obj['_defaultInstance']
+
+        cls._ch = channel_plugin('ws://localhost:' + str(cls.application_port) + '/cmd1/')
+        cls._ch2 = channel_plugin('ws://localhost:' + str(cls.application_port) + '/cmd2/')
         #cls._sending_list = []
 
     @classmethod
     #@unittest.skip("demonstrating skipping")
     def tearDownClass(cls):
-        cls._conn.close()
+        cls.db_conn.close()
+        cls._ch.no_f_rcv()
+        cls._ch2.no_f_rcv()
 
     #@unittest.skip("demonstrating skipping")
     def test_get_commanding_info(cls):
-        cursor = cls._conn.cursor()
+        cursor = cls.db_conn.cursor()
         cursor.execute('SELECT input,output FROM TESTCASES WHERE mapping =\'CMDINFO\'')
         cmd_list_of_tuples = cursor.fetchall()
         for e in cmd_list_of_tuples:
-            cls._ch.send(e[0])
+            cls._ch.send(json.dumps({"op":"RequestCmdDef", "msg":e[0] ,'inst': 'softsim'}))
             result =  cls._ch.rcv()
             cls.assertEquals(e[1],result)
             cls.assertItemsEqual(e[1], result)
 
     #@unittest.skip("demonstrating skipping")
     def test_get_commanding_post(cls):
-        cursor = cls._conn.cursor()
+        cursor = cls.db_conn.cursor()
         cursor.execute('SELECT input,output FROM TESTCASES WHERE mapping =\'CMDPOST\'')
         cmd_list_of_tuples = cursor.fetchall()
         for e in cmd_list_of_tuples:
-            cls._ch2.send(e[0])
+            cls._ch2.send(json.dumps({"op":"sendCommand", "msg":e[0] ,'inst': 'softsim'}))
             result = cls._ch2.rcv()
             #print result
             cls.assertEquals(byteify(e[1]), str(result["code"]))
             cls.assertItemsEqual(byteify(e[1]), str(result["code"]))
-"""
+
+
+
+
 # Testing Support Tools
 class channel_plugin:
     def __init__(self,url):

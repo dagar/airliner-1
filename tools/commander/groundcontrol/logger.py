@@ -3,9 +3,10 @@ import json,os
 coloredlogs.install()
 #datefmt='%m/%d/%Y %I:%M:%S %p'
 #logging.basicConfig(format="%(asctime)-15s - %(levelname)s - %(message)s",filename=os.path.dirname(__file__)+'/logs/django_server.log', filemode='w')
-handlers = [logging.FileHandler(os.path.dirname(__file__)+'/logs/django_server.log'), logging.StreamHandler()]
-logging.basicConfig(format="%(asctime)-15s - %(levelname)s - %(message)s",handlers = handlers, level=logging.DEBUG)
-#logging.basicConfig(format="%(asctime)-15s - %(levelname)s - %(message)s")
+#handlers = [logging.FileHandler(os.path.dirname(__file__)+'/logs/django_server.log'), logging.StreamHandler()]
+#logging.basicConfig(format="%(asctime)-15s - %(levelname)s - %(message)s",handlers = handlers)
+logging.basicConfig( format="%(asctime)-15s - %(levelname)s - %(message)s")
+
 
 
 
@@ -26,7 +27,7 @@ CRITICAL = bool(log_level[4] == '1')
 
 def logd(s,*args,**kwargs):
     if DEBUG:
-        logging.debug(s,*args,**kwargs)
+        logging.info(' DEBUG '+s,*args,**kwargs)
 
 def logi(s,*args,**kwargs):
     if INFO:

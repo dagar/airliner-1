@@ -30,7 +30,7 @@ address = lc['_localAddress']
 port = lc['_yamcsPort']
 video_port = lc['_videoPort']
 adsb_port =lc['_adsbport']
-db_conn = sqlite3.connect(app_path + '/test_database', timeout=5)
+
 
 def test_db_wrapper(input,output,code,desc):
     """!
@@ -42,13 +42,14 @@ def test_db_wrapper(input,output,code,desc):
     @return: void
     """
     if mode == 0:
+        db_conn = sqlite3.connect(app_path + '/test_database', timeout=5)
         try:
-            tk.collectTestCases(conn, code, input, output, desc)
-            conn.commit()
-            conn.close()
+            tk.collectTestCases(db_conn, code, input, output, desc)
+            db_conn.commit()
+            db_conn.close()
             logd('Item with code %s has been [INSERT] ed into database.', code)
-        except:
-            loge('Item with code %s has encountered [ERROR] , inserting into database.', code)
+        except Exception, err:
+            loge('Item with code %s has encountered [ERROR] , inserting into database. Error: %s. ', code,err)
             pass
 
 ########################################################
@@ -118,11 +119,12 @@ class session_maintainance(BaseConsumer):
                     loge('[SUBSCRIBE] error occured for client %s on item %s for instance %s. Error: %s',client_reply_channel,obj['msg'],message.channel_session['instance'],err)
                     pass
             ## Train
-            test_db_wrapper(message, 'null', 'SUBTLM', 'subscribe telemetry')
+            test_db_wrapper(json.dumps(obj), 'null', 'SUBTLM', 'subscribe telemetry')
 
 
         elif obj['op'] == 'unsubscribe_tlm':
             my_instance = str(message.channel_session['instance'])
+            #print obj
             tlm_obj = json.loads(obj['msg'])
             tlm_slug = str(tlm_obj['tlm'][0]['name'])
             try:
@@ -131,7 +133,7 @@ class session_maintainance(BaseConsumer):
                 to_send = '[1,1,0,' + str(temp) + ']'
                 sock_map[client_reply_channel].send(to_send)
                 ## Train
-                test_db_wrapper(message,'null','KILTLM','unsubscribe telemetry')
+                test_db_wrapper(json.dumps(obj),'null','KILTLM','unsubscribe telemetry')
                 logw('[UNSUBSCRIBE] attempt made for client %s on item %s for instance %s.',client_reply_channel, obj['msg'], message.channel_session['instance'])
             except Exception, err:
                 logw('Did not [UNSUBSCRIBE] this time for client %s on item %s for instance %s. Error: %s',client_reply_channel, obj['msg'], message.channel_session['instance'], err)
@@ -140,15 +142,17 @@ class session_maintainance(BaseConsumer):
 
 
         elif obj['op'] == 'kill_all_tlm':
-            to_kill_pid = proc_map[client_reply_channel]
+
             try:
+                to_kill_pid = proc_map[client_reply_channel]
                 to_kill = psutil.Process(to_kill_pid)
                 to_kill.kill()
                 del proc_map[client_reply_channel]
                 del sock_map[client_reply_channel]
                 logw('[TLMKILL] attempt made for client %s on process %s for instance %s.',client_reply_channel, str(to_kill_pid), message.channel_session['instance'])
+
             except:
-                logw('[TLMKILL] attempt made was UNSUCCESSFUL for client %s on process %s for instance %s.',client_reply_channel, str(to_kill_pid), message.channel_session['instance'])
+                logw('[TLMKILL] attempt made was UNSUCCESSFUL for client %s on process %s for instance %s.',client_reply_channel, 'NA', message.channel_session['instance'])
                 pass
 
     def push(self,websocket_obj,inst_name,id,msg_obj):
@@ -418,25 +422,25 @@ def getAdsb(message):
     text = message.content['text']
     client_reply_channel = message.content['reply_channel']
     if text == 'INVOKE':
-        if len(Group('adsb10').channel_layer.group_channels('adsb10'))!=0:
-            Group('adsb10').add(message.reply_channel)
+        if len(Group('adsb11').channel_layer.group_channels('adsb11'))!=0:
+            Group('adsb11').add(message.reply_channel)
         else:
             process = Process(target=adsbPush, args=(message,))
             process.start()
-            Group('adsb10').add(message.reply_channel)
+            Group('adsb11').add(message.reply_channel)
             adsb_proc.append(process.pid)
             logw('Donot Terminate adsb with ctrl+c, terminate from client.')
             logi('New adsb-push process has been [Created] with pid %s.', str(process.pid))
     elif text == 'KILL':
-        if len(Group('adsb10').channel_layer.group_channels('adsb10')) > 1 :
-            Group('adsb10').discard(message.reply_channel)
-        elif client_reply_channel in Group('adsb10').channel_layer.group_channels('adsb10'):
-            Group('adsb10').send({'text': 'KILLED'})
+        if len(Group('adsb11').channel_layer.group_channels('adsb11')) > 1 :
+            Group('adsb11').discard(message.reply_channel)
+        elif client_reply_channel in Group('adsb11').channel_layer.group_channels('adsb11'):
+            Group('adsb11').send({'text': 'KILLED'})
             for each in adsb_proc:
                 to_kill = psutil.Process(each)
                 to_kill.kill()
                 adsb_proc.remove(each)
-                Group('adsb10').discard(message.reply_channel)
+                Group('adsb11').discard(message.reply_channel)
                 logi('Adsb-push process has been [Killed] with pid %s.', str(each))
 
 def adsbPush(message):
@@ -449,12 +453,12 @@ def adsbPush(message):
         try:
             response = urllib.urlopen('http://' + str(address) + ':' + str(adsb_port) + '/dump1090/data.json')
             data = json.loads(json.dumps(response.read()))
-            Group('adsb10').send({'text': data})
+            Group('adsb11').send({'text': data})
             #message.reply_channel.send({'text': data})
             logi('ads-b packet is sent.')
 
         except Exception, err:
-            Group('adsb10').discard(message.reply_channel)
+            Group('adsb11').discard(message.reply_channel)
             loge('Adsb-push error occured while trying to push messages to client. Error %s', err)
             break
         ## avoids busy-while-loop
