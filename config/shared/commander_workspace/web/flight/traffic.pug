@@ -22,16 +22,14 @@ block main
             style.
               @import url(static/js/cesium/Source/Widgets/widgets.css);
             #cesiumContainer.fullSize
-
   script.
-
     loadScript('static/js/cesium/Build/CesiumUnminified/Cesium.js', function () {
       var adsb = new ADSB();
       Cesium.BingMapsApi.defaultKey = 'Anb5ZQS9_Qvje--nom_9ZKwQyQVnOOU04Fctd1uxMHnYoQKIcp1XFDrZuXN6evOQ';
       var viewer = new Cesium.Viewer('cesiumContainer');
       var AIRCRAFT = {};
       var tracking_step_limit = 25;
-      var outdated_seconds = 5;
+      var outdated_seconds = 10;
 
       function prepareRoute(lo,la,h,t,hex){
         var INSTANCE_VARIABLES = {lo:lo,la:la,h:h,t:t};
@@ -154,6 +152,10 @@ block main
       //executeQuery();
       $(document).ready(function(){setTimeout(executeQuery,1000)});
       window.onhashchange= function(){
+        //console.log('gone')
+        adsb.killAdsb();
+      };
+      window.onbeforeunload= function(){
         //console.log('gone')
         adsb.killAdsb();
       };

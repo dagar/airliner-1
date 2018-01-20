@@ -174,7 +174,7 @@ block main
               var prevY = -1;
               var prevZ = -1;
 
-              tlm_o.subscribeTelemetry({
+              sm.subscribeTelemetry({
                 homogeneity: {tolerance: 0},
                 'tlm': [
                   {'name': '/CFS/PX4/SA_X'},
@@ -194,7 +194,7 @@ block main
                     if (ZData.length >= MaxCount) {
                       ZData = ZData.slice(1);
                     }
-                    
+
                     console.log(params);
 
                     var timeStamp = new Date(params[0].acquisitionTime);

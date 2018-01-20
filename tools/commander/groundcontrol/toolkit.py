@@ -8,22 +8,9 @@ import ast
 import re
 import redis
 import sqlite3
+import logger
 
-## Global variables
-
-## Register working_dir
-#try:
 working_dir = os.getenv('YAMCS_WORKSPACE', '/home/vagrant/git/airliner/config/shared/commander_workspace/') + 'web'
-
-#os.environ['YAMCS_WORKSPACE']+'web'
-#except:
-    #working_dir = '/home/vagrant/git/airliner/config/shared/commander_workspace/web'
-    #pass
-
-## Register redis caching server
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
-
-## Custom Functions/Methods
 
 def getDate():
     """!
@@ -41,7 +28,6 @@ def get_directory(path):
     outFiles=[]
     error= None
     try:
-        #print '//*/*/*/*/*/*/*/*/**/*/*/*/*/*',working_dir
         rootdir = path.rstrip(os.sep)
         rootdir = working_dir +  path
 
@@ -78,7 +64,6 @@ def byteify(input):
     else:
         return input
 
-
 def log(name,status,status_type):
     """!
     A substitute for a print statement with predefined formatting
@@ -90,9 +75,7 @@ def log(name,status,status_type):
     date = getDate()
     print str(date)+' - '+str(status_type)+' - '+str(status)+' ( NAME : '+str(name)+' )'
 
-
-
-def preProcess(d,instance):
+def preProcess(d,instance=None):
     """!
     Processes only certain strings, this is to compensate for the syntax differences between javascript and python code.
     @param d: text
@@ -108,10 +91,13 @@ def preProcess(d,instance):
         x = array_obj[3]["data"]
         x1 = x['parameter']
         for i in range(len(x1)):
-            x['parameter'][i]['instance'] = instance
+            if instance!=None:
+                x['parameter'][i]['instance'] = instance
+            else:
+                x['parameter'][i]['instance'] = 'softsim'
         return str(x)
 
-
+#not tested
 def collectTestCases(conn,mapper,input,eo,desc):
     """!
     performs insert in a data base given the database connection passed in and parameter.
@@ -126,8 +112,36 @@ def collectTestCases(conn,mapper,input,eo,desc):
     insert = 'INSERT INTO `TESTCASES`(`mapping`,`input`,`output`,`time_stamp`,`description`)  VALUES (?,?,?,?,?)'
     c.execute(insert,(mapper,input,eo,getDate(),desc))
 
-
+#not tested
 def readJsonFromCloseCirlce(closecircle):
     with open(working_dir+'/'+closecircle+'/jsondata.json') as jfile:
         data = json.load(jfile)
     return data
+
+class launchConfig():
+
+    def __init__(self):
+        self.lc = {}
+        with open(os.path.dirname(os.path.realpath(os.path.dirname(__file__))) + '/scripts/launch_config.json') as f:
+            config = json.load(f)
+
+        self.lc['_localAddress'] = config['pyliner']['address']
+        self.lc['_yamcsPort'] = config['pyliner']['port']
+        self.lc['_videoPort'] = config['pyliner']['video_port']
+        self.lc['_adsbport'] = config['pyliner']['adsb_port']
+        self.lc['_defaultInstance'] = config['pyliner']['default_instance']
+        self.lc['_daphnePort'] = config['daphne_port']
+        self.lc['_numberOfWorkers'] = config['number_of_workers']
+        self.lc['_applicationMode'] = config['mode']
+        self.lc['_applicationPath'] = config['app_path']
+        self.lc['_loggingLevel'] = config['logging_level']
+
+    def get(self):
+        return self.lc
+    def set(self,key,value):
+        try:
+            self.lc[key]=value
+        except Exception,err:
+            loge('check key value, got: %s -> %s',key,value)
+
+

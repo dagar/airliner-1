@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 
 
@@ -119,15 +119,8 @@ function getSockets(obj){
 
 
 }
-
-
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 //---------------------------------------------------------------------------------------------------------------
@@ -138,18 +131,13 @@ function sleep(milliseconds) {
     2. Informs server about the instance selected. */
 //---------------------------------------------------------------------------------------------------------------
 var Session_Maintainance = function(){
-    try{
-        this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    }
-    catch(e){
-        this.ws_scheme="ws"
-    }
-    try{
-        this.websocket = new WebSocket(this.ws_scheme+'://' + window.location.host + '/session');
-    }
-    catch(e){
-        this.websocket = new WebSocket(this.ws_scheme+'://localhost:8000/session');
-    }
+
+    this.websocket = new WebSocket('ws://' + window.location.host + '/session');
+    this.info = new WebSocket('ws://'+ window.location.host + '/cmd1');
+    this.cmd = new WebSocket('ws://'+ window.location.host + '/cmd2');
+    this.event = new WebSocket('ws://' + window.location.host + '/event');
+
+
     var self = this;
     this.instance_name = null;
     this.subscribers = [];
@@ -157,7 +145,15 @@ var Session_Maintainance = function(){
     this.allSubscibers = [];
     this.activeSubscribers = [];
     this.toUnsubscribe= [];
-    this.count=0;
+    this.count_command_loads=1;
+    this.CommandQueue = [];
+    this.SendingQueue = [];
+    this.superQ = {};
+    this.ccount=0;
+    this.graphic = document.getElementsByClassName('loadingGraphics');
+    //this.status = document.getElementsByClassName('loadingText');
+
+
 
 
 
@@ -172,11 +168,237 @@ var Session_Maintainance = function(){
     this.websocket.onerror = function(evt){
         log('ERR','Connection closed with error - '+String(evt),'getInstanceList');
     };
+    /*getCommandInfo*/
+    this.info.onopen = function (){
+        log('DEBUG','Connection open.','getCommandInfo');
+    }
+
+    this.info.onclose = function (){
+        log('DEBUG','Connection closed.','getCommandInfo');
+    }
+    this.info.onerror = function (){
+        log('ERR','Connection closed.','getCommandInfo');
+    }
+
+    /*sendCommand*/
+    this.cmd.onopen = function (){
+        log('DEBUG','Connection open.','sendCommand');
+    }
+
+    this.cmd.onclose = function (){
+        log('DEBUG','Connection closed.','sendCommand');
+    }
+    this.info.onerror = function (){
+        log('ERR','Connection closed.','sendCommand');
+    }
+
+    /*event*/
+    this.event.onopen = function (){
+        log('DEBUG','Connection open.','getEvents');
+        self.event.send('INVOKE');
+        log('INFO','Message Sent.','getEvents');
+    }
+
+    this.event.onclose = function(){
+        log('DEBUG','Connection closed.','getEvents');
+    }
+    this.event.onerror = function(){
+        log('ERR','Connection closed.','getEvents');
+    }
 
 }
 Session_Maintainance.prototype = {
+    /*clean commanding queues*/
 
 
+    loadGraphics:function(){
+        var blur_level = 20
+        var content = document.getElementById('content')
+        content.style.webkitFilter='blur('+String(blur_level)+'px)'
+        content.style.filter='blur('+String(blur_level)+'px)'
+        var backup = this.graphic
+        var x = this.graphic[0];
+        if (x.style.display == 'none')
+        {
+           x.style.display = '';
+        }
+        else
+        {
+            x.style.display = 'none';
+        }
+
+
+
+
+        var spin = new TimelineMax();
+        var loading = new TimelineMax({
+            repeat: -1
+        });
+
+        spin.to($('.blade'), 0.6, {
+            rotation: 360,
+            repeat: -1,
+            transformOrigin: '50% 50%',
+            ease: Linear.easeNone
+        });
+
+        loading.to($('.loadingText'), 1, {
+            opacity: 0,
+            ease: Linear.easeNone
+        })
+        .to($('.loadingText'), 1, {
+            opacity: 1,
+            ease: Linear.easeNone
+        });
+
+        window.addEventListener('unload_animation', function (e) {
+            spin.stop();
+            loading.stop();
+            x.style.display = 'none';
+            for(var i =blur_level ; i<1; i--){
+            content.style.webkitFilter='blur('+String(i)+'px)'
+            content.style.filter='blur('+String(blur_level)+'px)'
+            }
+            content.style.webkitFilter=''
+            content.style.filter=''
+            this.graphic = backup
+
+        });
+        // example js to make a fade out when the page is done loading
+         /*$(window).load(function() {
+            $(".se-pre-con").fadeOut("slow");
+        });*/
+
+    },
+
+    cleanSlate: function(){
+        this.CommandQueue = [];
+        this.SendingQueue = [];
+        this.count=0;
+        log('DEBUG','Clean slate executed.','commandCleanSlate')
+    },
+
+    RequestCmdDef: function(cmdObj, cb){
+        var socket = this.info;
+        var self = this;
+        var cmdName = Object.keys(cmdObj)[0];
+
+        if (!Object.keys(self.superQ).includes(cmdName)){
+
+            socket.send(JSON.stringify({"op":"RequestCmdDef", "msg":cmdName ,'inst': this.instance_name}));
+            return false;
+        }
+        else{
+            try{
+
+                var btn = cmdObj[cmdName][0];
+                var jsn = cmdObj[cmdName][1];
+                cb(self.superQ[cmdName],jsn,btn);
+                //self.count_command_loads+=1
+                //var st = 'Loading Commands ..... '+String(Math.round(self.count_command_loads*100/self.CommandQueue.length))+'%'+' EVENT : '+JSON.stringify(jsn)
+                //console.log(st)
+
+                return true;
+            }
+            catch(err){
+                return true;
+            }
+        }
+    },
+
+    ProcessCmds: function(cb){
+
+        var socket = this.info;
+        var self = this;
+        var cq = makeIterator(this.CommandQueue)
+        var btn = null;
+        var jsn = null;
+        var Que_obj = null;
+        var message = null;
+        var i = 0;
+
+
+        do{
+
+            if(cq.done()){
+                log('INFO','Commanding Queue processing complete.!','sendCommand');
+                var evt = new CustomEvent('unload_animation', { detail: 'state' });
+                window.dispatchEvent(evt);
+                break;
+            }
+
+            Que_obj = cq.next().value;
+            //sleep(5);
+
+            /*self.count_command_loads+=1
+            var st = '##########Loading ...  '+String(self.count_command_loads*100/self.CommandQueue.length)+'%'
+            console.log(st)
+            self.status.innerHTML = st*/
+        } while(this.RequestCmdDef(Que_obj, cb) == true);
+
+        socket.onmessage = function (event){
+            /* Retrieve the object and call the callback. */
+            var cmdName = Object.keys(Que_obj)[0];
+            var btn = Que_obj[cmdName][0];
+            var jsn = Que_obj[cmdName][1];
+            self.superQ[cmdName]= event;
+
+            cb(event,jsn,btn);
+            var compute_p = Math.round(self.count_command_loads*100/self.SendingQueue.length)
+
+            self.count_command_loads+=1
+            var st = 'Loading Commands ..... <br/> Completed : '+String(compute_p)+'%'//+' <br/> Command : '+JSON.stringify(jsn['cmd']['name'])
+            //console.log(st)
+            document.getElementsByClassName('loadingText')[0].innerHTML = st
+            if(compute_p>100){
+               document.getElementsByClassName('loadingText')[0].innerHTML = 'Please Wait ....'
+               this.count_command_loads=1;
+            }
+
+            do{
+                if(cq.done()){
+		            log('INFO','Commanding Queue processing complete.!','sendCommand');
+		            var evt = new CustomEvent('unload_animation', { detail: 'state' });
+                    window.dispatchEvent(evt);
+                    break;
+                }
+
+                Que_obj = cq.next().value;
+                /*self.count_command_loads+=1
+                var st = '##########Loading ...  '+String(self.count_command_loads*100/self.CommandQueue.length)+'%'
+                console.log(st)
+                self.status.innerHTML = st*/
+                //document.getElementsByClassName('loadingText')[0].innerHTML = 'Almost ready...'
+            } while(self.RequestCmdDef(Que_obj, cb) == true);
+        }
+
+    },
+
+    prepareCmds: function(message,jobj,btn){
+        var lookup_obj = {}
+        lookup_obj[message]=[btn,jobj]
+        this.CommandQueue.push(lookup_obj);
+        if(!this.SendingQueue.includes(message)){
+            this.SendingQueue.push(message);
+        }
+    },
+
+    sendCommand: function(name,args){
+        var obj = {"name":name,"args":args}
+        var message = JSON.stringify(obj)
+        var socket = this.cmd;
+
+        socket.onmessage = function (event){
+           //log('DEBUG',event,'')
+            log('INFO','Button feedback.',event);
+        }
+
+        if (socket.readyState == WebSocket.OPEN) {
+//          #/console.log(message);
+          socket.send(JSON.stringify({"op":"sendCommand", "msg":message,'inst': this.instance_name}));
+        };
+
+    },
 
     /*transmitCurrentInstance*/
     transmitCurrentInstance: function(message){
@@ -217,7 +439,7 @@ Session_Maintainance.prototype = {
 
             log('INFO','Message sent.','transmitCurrentInstance');
             socket.send(JSON.stringify({"op":"bind_instance","msg":message}));
-            //this.instance_name=message;
+            this.instance_name=message;
             //console.log(socket);
             //console.log(this.websocket2);
             //console.log(message);
@@ -226,10 +448,7 @@ Session_Maintainance.prototype = {
 
 
     subscribeTelemetry: function(msgObj,cb){
-
-
         var socket = this.websocket;
-        var c = this.count;
         var message = "";
         var self = this;
         self.allSubscibers.push(msgObj)
@@ -283,119 +502,28 @@ Session_Maintainance.prototype = {
             log('INFO','Message queued.','subscribeTelemetry');
             this.queuedSubscribers.push({'message':message, 'callback':cb});
         }
-        //var pb = dcodeIO.P
-        var wssm=null
-        var wsrd=null
-        var wssd=null
-        var wsed=null
-        var psr=null
-        var ci =null
+        socket.onmessage = function (message2){
+            log('INFO','Message received.','subscribeTelemetry');
+            var fixedDataString = message2.data.replace(/\'/g, '"')
+            fixedDataString = fixedDataString.replace(new RegExp('True', 'g'),'true');
+            fixedDataString = fixedDataString.replace(new RegExp('False', 'g'),'false');
+            var data = JSON.parse(fixedDataString);
+            if(data.hasOwnProperty('parameter')) {
+                data.parameter.forEach(function(param){
+                    var tlmName = param.id.name;
 
-
-        protobuf.load("/static/proto/web.proto",function(err,root){
-
-            console.log(err);
-            wssm = root.lookupType("web.WebSocketServerMessage");
-            /*wsrd = wssm.lookupType("web.WebSocketReplyData");
-            wssd = wssm.lookupType("web.WebSocketSubscriptionData");
-            wsed = wssm.lookupType("web.WebSocketExceptionData");
-            psr = wssm.lookupType("web.ParameterSubscriptionResponse");
-            ci = wssm.lookupType("web.ConnectionInfo");*/
-            console.log('success');
-
-            socket.onmessage = function (message2){
-
-
-                var obj  = wssm.toObject(atob(message2.data), {
-                    enums: String,  // enums as string names
-                    longs: String,  // longs as strings (requires long.js)
-                    bytes: String,  // bytes as base64 encoded strings
-                    defaults: true, // includes default values
-                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
-                    objects: true,  // populates empty objects (map fields) even if defaults=false
-                    oneofs: true    // includes virtual oneof fields set to the present field's name
+                    if(tlmName in self.subscribers){
+                        var subscriptions = self.subscribers[tlmName];
+                        subscriptions.forEach(function(subscription){
+                            subscription.callback(param);
+                        });
+                    }
                 });
-                /*
-                var obj1 = wsrd.toObject(atob(message2.data), {
-                    enums: String,  // enums as string names
-                    longs: String,  // longs as strings (requires long.js)
-                    bytes: String,  // bytes as base64 encoded strings
-                    defaults: true, // includes default values
-                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
-                    objects: true,  // populates empty objects (map fields) even if defaults=false
-                    oneofs: true    // includes virtual oneof fields set to the present field's name
-                });
-                var obj2 = wssd.toObject(atob(message2.data), {
-                   enums: String,  // enums as string names
-                    longs: String,  // longs as strings (requires long.js)
-                    bytes: String,  // bytes as base64 encoded strings
-                    defaults: true, // includes default values
-                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
-                    objects: true,  // populates empty objects (map fields) even if defaults=false
-                    oneofs: true    // includes virtual oneof fields set to the present field's name
-                });
-                var obj3 = wsed.toObject(atob(message2.data), {
-                   enums: String,  // enums as string names
-                    longs: String,  // longs as strings (requires long.js)
-                    bytes: String,  // bytes as base64 encoded strings
-                    defaults: true, // includes default values
-                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
-                    objects: true,  // populates empty objects (map fields) even if defaults=false
-                    oneofs: true    // includes virtual oneof fields set to the present field's name
-                 });
-                var obj4 = psr.toObject(atob(message2.data), {
-                    enums: String,  // enums as string names
-                    longs: String,  // longs as strings (requires long.js)
-                    bytes: String,  // bytes as base64 encoded strings
-                    defaults: true, // includes default values
-                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
-                    objects: true,  // populates empty objects (map fields) even if defaults=false
-                    oneofs: true    // includes virtual oneof fields set to the present field's name
-                });
-                var obj5 = ci.toObject(atob(message2.data),{
-                    enums: String,  // enums as string names
-                    longs: String,  // longs as strings (requires long.js)
-                    bytes: String,  // bytes as base64 encoded strings
-                    defaults: true, // includes default values
-                    arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
-                    objects: true,  // populates empty objects (map fields) even if defaults=false
-                    oneofs: true    // includes virtual oneof fields set to the present field's name
-                });*/
-                //console.log(_base64ToArrayBuffer(message2.data))
-                log('INFO','Message received.','subscribeTelemetry');
-                c = c+1
-                console.log('COUNT : ',c,'   OBJ : ',obj);/*
-                console.log(obj1);
-                console.log(obj2);
-                console.log(obj3);
-                console.log(obj4);
-                console.log(obj5);*/
-
-
-
-
-                var fixedDataString = message2.data.replace(/\'/g, '"')
-                fixedDataString = fixedDataString.replace(new RegExp('True', 'g'),'true');
-                fixedDataString = fixedDataString.replace(new RegExp('False', 'g'),'false');
-                var data = JSON.parse(fixedDataString);
-
-                if(data.hasOwnProperty('parameter')) {
-                    data.parameter.forEach(function(param){
-                        var tlmName = param.id.name;
-
-                        if(tlmName in self.subscribers){
-                            var subscriptions = self.subscribers[tlmName];
-                            subscriptions.forEach(function(subscription){
-                                subscription.callback(param);
-                            });
-                        }
-                    });
-                }
-                //this.subscribers[event.data.parameter.data.keys(obj).forEach(function(key,index) {
-                //console.log(event);
-                //cb(event);
             }
-        });
+            //this.subscribers[event.data.parameter.data.keys(obj).forEach(function(key,index) {
+            //console.log(event);
+            //cb(event);
+        }
     },
 
     unSubscribeTelemetry: function(msgObj){
@@ -428,8 +556,6 @@ Session_Maintainance.prototype = {
 
     },
 
-
-
     killAll: function(){
         var self = this;
         for(var i=0;i<20;i++){
@@ -448,6 +574,23 @@ Session_Maintainance.prototype = {
         }
     },
 
+    eventSubscription: function(cb){
+        var socket = this.event
+
+        socket.onmessage = function (event){
+            log('INFO','Message received.','getEvents');
+            cb(event);
+        }
+
+    },
+
+    eventKill:function(){
+    var socket = this.event
+    for(var i=0;i<20;i++){
+        socket.send('KILLSWITCH');
+        }
+    },
+
 
 
 }
@@ -461,26 +604,14 @@ Session_Maintainance.prototype = {
 //---------------------------------------------------------------------------------------------------------------
 
 var Instance = function(){
-    try{
-    this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    }
-    catch(e){
-    this.ws_scheme="ws"
-    }
-    try{
-    this.websocket1 = new WebSocket(this.ws_scheme+'://' + window.location.host + '/inst');
-    }
-    catch(e){
-    this.websocket1 = new WebSocket(this.ws_scheme+'://localhost:8000/inst');
-    }
+    this.websocket1 = new WebSocket('ws://' +window.location.host + '/inst');
     var self = this;
-
-
-
     /*getInstanceList*/
     this.websocket1.onopen = function(){
         log('DEBUG','Connection open.','getInstanceList');
         self.websocket1.send('INVOKE');
+        self.websocket1.send('INVOKE');//backup1
+        self.websocket1.send('INVOKE');//backup2
         log('INFO','Invoke Sent.','getInstanceList');
     };
     this.websocket1.onclose = function(){
@@ -490,14 +621,9 @@ var Instance = function(){
         log('ERR','Connection closed with error - '+String(evt),'getInstanceList');
     };
 
-
-
-
-
 }
 
 Instance.prototype = {
-
     /*getInstanceList*/
     getInstanceList: function (cb){
         var socket = this.websocket1;
@@ -506,7 +632,6 @@ Instance.prototype = {
             cb(event);
         }
     },
-
 }
 //---------------------------------------------------------------------------------------------------------------
 /* DIRECTORY:
@@ -515,18 +640,13 @@ Instance.prototype = {
 //---------------------------------------------------------------------------------------------------------------
 
 var Directory = function(){
-    try{
-    this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    this.websocket = new WebSocket(this.ws_scheme+'://' + window.location.host + '/dir');
-    }
-    catch(e){
-    this.websocket = new WebSocket('ws://localhost:8000/dir');
-    }
+    this.websocket = new WebSocket('ws://' + window.location.host + '/dir');
     var self = this;
-
     this.websocket.onopen = function(){
         log('DEBUG','Connection open.','getDirectoryList');
         self.websocket.send('');
+        self.websocket.send('');//backup1
+        self.websocket.send('');//backup2
         log('INFO','Message Sent.','getDirectoryList');
     }
     this.websocket.onclose = function(){
@@ -535,11 +655,9 @@ var Directory = function(){
     this.websocket.onerror = function(evt){
         log('ERR','Connection closed with error - '+String(evt),'getInstanceList');
     };
-
 }
 
 Directory.prototype = {
-
     getDirectoryListing: function(message,cb){
         var socket = this.websocket;
         socket.onmessage = function (event){
@@ -555,11 +673,6 @@ Directory.prototype = {
 
 }
 
-
-
-
-
-
 //---------------------------------------------------------------------------------------------------------------
 /* COMMAND:
    A web socket function to establish command specific communication between server and client.
@@ -569,151 +682,7 @@ Directory.prototype = {
    3. Request command information.
    4. Send commands.*/
 //---------------------------------------------------------------------------------------------------------------
-var Command =function(){
-    try{
-    this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    this.info = new WebSocket(this.ws_scheme+'://' + window.location.host + '/cmd1');
-    this.cmd = new WebSocket(this.ws_scheme+'://' + window.location.host + '/cmd2');
-    }
-    catch(e){
-    this.info = new WebSocket('ws://localhost:8000/cmd1');
-    this.cmd = new WebSocket('ws://localhost:8000/cmd2');
-    }
-    this.CommandQueue = [];
-    this.SendingQueue = [];
-    this.superQ = {};
-    this.count=0;
-    var self = this;
 
-    /*getCommandInfo*/
-    this.info.onopen = function (){
-        log('DEBUG','Connection open.','getCommandInfo');
-    }
-
-    this.info.onclose = function (){
-        log('DEBUG','Connection closed.','getCommandInfo');
-    }
-    this.info.onerror = function (){
-        log('ERR','Connection closed.','getCommandInfo');
-    }
-
-    /*sendCommand*/
-    this.cmd.onopen = function (){
-        log('DEBUG','Connection open.','sendCommand');
-    }
-
-    this.cmd.onclose = function (){
-        log('DEBUG','Connection closed.','sendCommand');
-    }
-    this.info.onerror = function (){
-        log('ERR','Connection closed.','sendCommand');
-    }
-
-}
-
-Command.prototype = {
-
-    cleanSlate: function(){
-        this.CommandQueue = [];
-        this.SendingQueue = [];
-        this.count=0;
-        log('DEBUG','Clean slate executed.','commandCleanSlate')
-    },
-
-    RequestCmdDef: function(cmdObj, cb){
-        var socket = this.info;
-        var self = this;
-        var cmdName = Object.keys(cmdObj)[0];
-
-        if (!Object.keys(self.superQ).includes(cmdName)){
-
-            socket.send(cmdName);
-            return false;
-        }
-        else{
-            try{
-
-                var btn = cmdObj[cmdName][0];
-                var jsn = cmdObj[cmdName][1];
-                cb(self.superQ[cmdName],jsn,btn);
-                return true;
-            }
-            catch(err){
-                return true;
-            }
-        }
-    },
-
-    ProcessCmds: function(cb){
-
-        var socket = this.info;
-        var self = this;
-        var cq = makeIterator(this.CommandQueue)
-        var btn = null;
-        var jsn = null;
-        var Que_obj = null;
-        var message = null;
-        var i = 0;
-
-
-        do{
-            if(cq.done()){
-                log('INFO','Commanding Queue processing complete.!','sendCommand');
-                break;
-            }
-
-            Que_obj = cq.next().value;
-        } while(this.RequestCmdDef(Que_obj, cb) == true);
-
-        socket.onmessage = function (event){
-            /* Retrieve the object and call the callback. */
-            var cmdName = Object.keys(Que_obj)[0];
-            var btn = Que_obj[cmdName][0];
-            var jsn = Que_obj[cmdName][1];
-            self.superQ[cmdName]= event;
-
-            cb(event,jsn,btn);
-
-            do{
-                if(cq.done()){
-		            log('INFO','Commanding Queue processing complete.!','sendCommand');
-                    break;
-                }
-
-                Que_obj = cq.next().value;
-            } while(self.RequestCmdDef(Que_obj, cb) == true);
-        }
-
-    },
-
-    prepareCmds: function(message,jobj,btn){
-        var lookup_obj = {}
-        lookup_obj[message]=[btn,jobj]
-        this.CommandQueue.push(lookup_obj);
-        if(!this.SendingQueue.includes(message)){
-            this.SendingQueue.push(message);
-        }
-    },
-
-    sendCommand: function(name,args){
-        var obj = {"name":name,"args":args}
-        var message = JSON.stringify(obj)
-        var socket = this.cmd;
-
-        socket.onmessage = function (event){
-           //log('DEBUG',event,'')
-            log('INFO','Button feedback.',event);
-        }
-
-        if (socket.readyState == WebSocket.OPEN) {
-//          #/console.log(message);
-          socket.send(message);
-        };
-
-    },
-
-
-}
 //---------------------------------------------------------------------------------------------------------------
 /* EVENT:
    A web socket function to establish event specific communication between server and client.
@@ -721,14 +690,8 @@ Command.prototype = {
 //---------------------------------------------------------------------------------------------------------------
 
 var Event = function(){
-    try{
-    this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    this.event = new WebSocket(this.ws_scheme+'://' + window.location.host + '/event');
-    }
-    catch(e){
 
-    this.event=new WebSocket('ws://localhost:8000/event');
-    }
+    this.event = new WebSocket('ws://' + window.location.host + '/event');
     var self = this;
 
     this.event.onopen = function (){
@@ -774,8 +737,7 @@ Event.prototype = {
    Initializes web socket to receive video frames.*/
 //---------------------------------------------------------------------------------------------------------------
 var ADSB = function() {
-        this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        this.vid_subc = new WebSocket(this.ws_scheme+'://' + window.location.host + '/adsb');
+        this.vid_subc = new WebSocket('ws://' + window.location.host + '/adsb');
         this.video_subscribers = {};
         var self = this;
 
@@ -837,23 +799,18 @@ ADSB.prototype = {
    Initializes web socket to receive video frames.*/
 //---------------------------------------------------------------------------------------------------------------
 var Video = function() {
-        this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        this.vid_subc = new WebSocket(this.ws_scheme+'://' + window.location.host + '/video');
+        this.vid_subc = new WebSocket('ws://' +window.location.host + '/video');
         this.video_subscribers = {};
         var self = this;
 
-
         this.vid_subc.onopen = function (){
-            log('DEBUG','Connection open.','getAdsbStream');
-            //self.vid_subc.send('INVOKE');//TODO
-            //log('INFO','Message Sent.','getAdsbStream');
+            log('DEBUG','Connection open.','getVideoStream');
         }
-
         this.vid_subc.onclose = function(){
-            log('DEBUG','Connection closed.','getAdsbStream');
+            log('DEBUG','Connection closed.','getVideoStream');
         }
         this.vid_subc.onerror = function(){
-            log('ERR','Connection closed.','getAdsbStream');
+            log('ERR','Connection closed.','getVideoStream');
         }
 
 }
@@ -861,144 +818,30 @@ Video.prototype = {
 
     getVideoStream:function(cb){
         var socket = this.vid_subc;
-        //this.ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        //ar socket = new WebSocket(this.ws_scheme+'://' + window.location.host + '/video');
-        //console.log('hello888888888888888888888888888');
-        sleep(200);
         socket.send('INVOKE');
         socket.onmessage = function (event){
             log('INFO','Message received.','getVideoStream');
             cb(event);
         }
-
-        //if (socket.readyState == WebSocket.OPEN) {
-        //  socket.send('INVOKE');
-        //  log('INFO','Message Sent.','getVideoStream');
-        //};
-
-        /*socket.onopen = function (){
-            log('DEBUG','Connection open.','getVideoStream');
-            socket.send('INVOKE');//TODO
-            log('INFO','Message Sent.','getVideoStream');
-        }
-
-        socket.onclose = function(){
-            log('DEBUG','Connection closed.','getVideoStream');
-        }
-
-        socket.onerror = function(){
-            log('ERR','Connection closed.','getVideoStream');
-        }*/
-
-
     },
+
     killVideo:function(){
         var socket = this.vid_subc;
         for(var i=0;i<20;i++){
             socket.send('KILL');
             console.log('sent kill video');
-            //socket.close();
         }
 
     },
 
-}
-
-//---------------------------------------------------------------------------------------------------------------
-/* SESSION:
-   A data management function to supervise all above communications.
-   It is a collection of utilities to perform advanced operations on communication channels and data.*/
-//---------------------------------------------------------------------------------------------------------------
-
-var Session = function(){
-    this.DefaultInstance = 'softsim';
-    this.CurrentInstance = null;
-    this.Master = false;
-    this.sockets = [];
-
-}
-Session.prototype ={
-    //TODO
-
-    setCurrentInstance : function(instance){
-        this.CurrentInstance = instance;
-    },
-
-    getCurrentInstance : function(){
-        return this.CurrentInstance;
-    },
-
-    saveSockets : function(list){
-        for(var i in list){
-            this.sockets = this.sockets.concat(getSockets(list[i]));
-        }
-    },
-
-    sendMessage : function(message,ws_obj,cb){
-
-
-
-        ws_obj.onopen = function (){
-
-            ws_obj.send(message);
-        }
-        ws_obj.onclose = function (){
-
-            ws_obj.close();
-        }
-        ws_obj.onerror = function (){
-
-
-        }
-        ws_obj.onmessage = function (event){
-
-            //log('INFO','got resp',event);
-            cb(event);
-            //socket.close();
-        }
-        if (ws_obj.readyState == WebSocket.OPEN) {
-
-          ws_obj.onopen();
-        };
-
-
+    killVideoSocket:function(){
+        var socket = this.vid_subc;
+        socket.close();
     }
+
 }
 
 
-/*
-console.log('___________________________');
-
-protobuf.load("/static/proto/web.proto",function(err,root){
-var wsr = root.lookupType("web.WebSocketReplyData");
-var p = '\x08\x04"\x9a\x01\x08\x02\x10\x08\x1a\x93\x01\n\x90\x01\n\x1c\n\x1a/CFS/DS/CmdRejectedCounter\x12\x04\x08\x02(\x00\x1a\x04\x08\x02(\x00 \x96\xb0\x9f\xda\x8e,(\xbb\xa4\x8f\xe5\x9c\t0\x008\x01Z\x172018-01-12T16:50:05.326b\x171980-01-17T14:04:41.859\xb8\x01\xf2\xbb\x9f\xda\x8e,\xc2\x01\x172018-01-12T16:50:06.826'
-
-
-
-var obj = wsr.toObject(p, {
-  enums: String,  // enums as string names
-  longs: String,  // longs as strings (requires long.js)
-  bytes: String,  // bytes as base64 encoded strings
-  defaults: true, // includes default values
-  arrays: true,   // populates empty arrays (repeated fields) even if defaults=false
-  objects: true,  // populates empty objects (map fields) even if defaults=false
-
-});
-
-
-
-
-console.log('success');
-console.log(obj);
-});
-
-
-
-
-
-console.log('___________________________');
-
-*/
 
 if(typeof module != 'undefined') {
     module.exports.getDate = getDate;

@@ -73,7 +73,7 @@ do
 done
 
 # DAPHNE
-daphne commander.asgi:channel_layer --port "$PORT" &
+daphne -b 0.0.0.0 -p "$PORT" commander.asgi:channel_layer   &
 arr+=($!)
 
 wait
