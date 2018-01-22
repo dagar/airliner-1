@@ -24,32 +24,32 @@ def index(r,a=None):
     """
 
     if a==None:
-        logi('Requested index.pug')
-        try:
+        #logi('Requested index.pug')
+        #try:
             return render(r,'index.pug')
-        except Exception, err:
-            logw('Did not render requested file \'%s.pug\'.')
-            logw('Insight on file \'index.pug\'. Error: %s', err)
-            html = "<html><body>Error Log: <br/> %s </body></html>" % err
-            return HttpResponse(html)
+        #except Exception, err:
+            #logw('Did not render requested file \'%s.pug\'.')
+            #logw('Insight on file \'index.pug\'. Error: %s', err)
+            #html = "<html><body>Error Log: <br/> %s </body></html>" % err
+            #return HttpResponse(html)
     elif a.find('.js')!=-1:
-        logi('Requested %s', str(a))
-        try:
+        #logi('Requested %s', str(a))
+        #try:
             return render(r, str(a))
-        except Exception, err:
-            logw('Did not render requested file \'%s.pug\'.')
-            logw('Insight on file \'%s.js\'. Error: %s', a, err)
-            html = "<html><body>Error Log: <br/> %s </body></html>" % err
-            return HttpResponse(html)
+        #except Exception, err:
+            #logw('Did not render requested file \'%s.pug\'.')
+            #logw('Insight on file \'%s.js\'. Error: %s', a, err)
+            #html = "<html><body>Error Log: <br/> %s </body></html>" % err
+            #return HttpResponse(html)
     else:
-        logi('Requested %s', str(a + '.pug'))
-        try:
+        #logi('Requested %s', str(a + '.pug'))
+        #try:
             return render(r, str(a+'.pug'))
-        except Exception, err:
-            logw('Did not render requested file \'%s.pug\'.')
-            logw('Insight on file \'%s.pug\'. Error: %s',a,err)
-            html = "<html><body>Error Log: <br/> %s </body></html>" % err 
-            return HttpResponse(html)
+        #except Exception, err:
+            #logw('Did not render requested file \'%s.pug\'.')
+            #logw('Insight on file \'%s.pug\'. Error: %s',a,err)
+            #html = "<html><body>Error Log: <br/> %s </body></html>" % err 
+            #return HttpResponse(html)
 
 
 def router(r,a,b,c=None,d=None):
@@ -63,47 +63,47 @@ def router(r,a,b,c=None,d=None):
     @return: Rendered Response
     """
     if c==None and d==None:
-        try:
-            json = readJsonFromCloseCirlce(str(a))
-        except:
+        #try:
+            #json = readJsonFromCloseCirlce(str(a))
+        #except:
             json = 'NULL'
-        logi('Requested %s', str(a + '/' + b + '.pug'))
-        try:
+        #logi('Requested %s', str(a + '/' + b + '.pug'))
+        #try:
             return render(r, str(a+'/'+b+'.pug'),{'obj':json})
-        except Exception, err:
-            logw('Did not render requested file \'%s.pug\'.')
-            logw('Insight on file \'%s\'. Error: %s', str(a+'/'+b+'.pug'), err)
-            html = "<html><body>Error Log: <br/> %s </body></html>" % err
-            return HttpResponse(html)
+        #except Exception, err:
+            #logw('Did not render requested file \'%s.pug\'.')
+            #logw('Insight on file \'%s\'. Error: %s', str(a+'/'+b+'.pug'), err)
+            #html = "<html><body>Error Log: <br/> %s </body></html>" % err
+            #return HttpResponse(html)
 
 
     elif d==None:
-        try:
-            json = readJsonFromCloseCirlce(str(a+'/'+b+'/'))
-        except:
+        #try:
+            #json = readJsonFromCloseCirlce(str(a+'/'+b+'/'))
+        #except:
             json = 'NULL'
-        logi('Requested %s', str(a + '/' + b + '/' + c + '.pug'))
-        try:
+        #logi('Requested %s', str(a + '/' + b + '/' + c + '.pug'))
+        #try:
             return render(r, str(a+'/'+b+'/'+c+'.pug'),{'obj':json})
-        except Exception, err:
-            logw('Did not render requested file \'%s.pug\'.')
-            logw('Insight on file \'%s\'. Error: %s',str(a+'/'+b+'/'+c+'.pug'),err)
-            html = "<html><body>Error Log: <br/> %s </body></html>" % err
-            return HttpResponse(html)
+        #except Exception, err:
+            #logw('Did not render requested file \'%s.pug\'.')
+            #logw('Insight on file \'%s\'. Error: %s',str(a+'/'+b+'/'+c+'.pug'),err)
+            #html = "<html><body>Error Log: <br/> %s </body></html>" % err
+            #return HttpResponse(html)
 
     else:
-        try:
-            json = readJsonFromCloseCirlce(str(a+'/'+b+'/'+c+'/'))
-        except:
+        #try:
+            #json = readJsonFromCloseCirlce(str(a+'/'+b+'/'+c+'/'))
+        #except:
             json = 'NULL'
-        logi('Requested %s', str(a + '/' + b + '/' + c + '/' + d + '.pug'))
-        try:
-            return render(r, str(a +'/'+b+'/'+c+'/'+d+ '.pug'),{'obj':json})
-        except Exception, err:
-            logw('Did not render requested file \'%s.pug\'.')
-            logw('Insight on file \'%s\'. Error: %s', str(a +'/'+b+'/'+c+'/'+d+ '.pug'), err)
-            html = "<html><body>Error Log: <br/> %s </body></html>" % err
-            return HttpResponse(html)
+        #logi('Requested %s', str(a + '/' + b + '/' + c + '/' + d + '.pug'))
+        #try:
+            #return render(r, str(a +'/'+b+'/'+c+'/'+d+ '.pug'),{'obj':json})
+        #except Exception, err:
+            #logw('Did not render requested file \'%s.pug\'.')
+            #logw('Insight on file \'%s\'. Error: %s', str(a +'/'+b+'/'+c+'/'+d+ '.pug'), err)
+            #html = "<html><body>Error Log: <br/> %s </body></html>" % err
+            #return HttpResponse(html)
 
 
 def pug_router(r,a,b,c=None,d=None):

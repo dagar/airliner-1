@@ -76,7 +76,7 @@ ROOT_URLCONF = 'commander.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(os.environ['YAMCS_WORKSPACE'],'web'),os.path.join(BASE_DIR,  'groundcontrol/templates'),],
+        'DIRS': [os.path.join(os.environ['YAMCS_WORKSPACE'],'web'),os.path.join(BASE_DIR,  '/groundcontrol/templates'),],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -97,6 +97,7 @@ TEMPLATES = [
     },
 ]
 
+print '-------->>>>>>>>>>>>>>>>>>>>> TEMPLATE DIRECTORIES ::: ',TEMPLATES[0]['DIRS']
 
 
 WSGI_APPLICATION = 'commander.wsgi.application'

@@ -8,7 +8,7 @@
   },
   "daphne_port": 8001,
   "number_of_workers": 8,
-  "mode": 1,
+  "mode": 2,
   "app_path": "/home/vagrant/git/airliner/tools/commander/",
   "logging_level": 11111
 }
