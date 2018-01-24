@@ -9,7 +9,7 @@ import os
 import time
 import mocking_yamcs as tstserv
 
-os.environ.setdefault('YAMCS_WORKSPACE', '/home/vagrant/git/airliner/config/shared/commander_workspace/') + 'web'
+os.environ.setdefault('YAMCS_WORKSPACE', '/home/vagrant/git/airliner/config/shared/commander_workspace/') + '/web'
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "commander.settings")
 django.setup()
 
