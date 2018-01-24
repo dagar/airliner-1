@@ -10,7 +10,7 @@ import redis
 import sqlite3
 import logger
 
-working_dir = os.getenv('YAMCS_WORKSPACE', '/home/vagrant/git/airliner/config/shared/commander_workspace/') + 'web'
+working_dir = os.getenv('YAMCS_WORKSPACE', '/home/vagrant/git/airliner/config/shared/commander_workspace/') + '/web'
 
 def getDate():
     """!
