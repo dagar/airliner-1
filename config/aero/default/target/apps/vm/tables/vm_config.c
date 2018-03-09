@@ -42,104 +42,428 @@ static OS_USED CFE_TBL_FileDef_t CFE_TBL_FileDef =
 /* Default ULR config table data */
 VM_ConfigTbl_t VM_ConfigTbl =
 {
-		//SYS_AUTOSTART (for hil)
+		/** \brief Auto-start script index
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 99999, default 0.
+		 */
 		6001,
-		//COM_RC_IN_MODE
+		/** \brief RC control input mode
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 2, default 0.
+		 */
 		2,
-		//COM_ARM_SWISBTN
+		/** \brief Arm switch is only a button
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 1, default 0.
+		 */
 		0,
-		//COM_ARM_WO_GPS
+		/** \brief Allow arming without GPS
+		 *
+		 *  \par Limits:
+		 *       default 1.
+		 */
 		1,
-		//COM_ARM_MIS_REQ
+		/** \brief Require valid mission to arm
+		 *
+		 *  \par Limits:
+		 *       default 0.
+		 */
 		0,
-		//COM_RC_ARM_HYST
+		/** \brief RC input arm/disarm command duration
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 100 > 1500, default 1000.
+		 */
 		1000,
-		//MAV_TYPE
-		13,
-		//MAV_SYS_ID
-		1,
-		//MAV_COMP_ID
-		1,
-		//CBRK_SUPPLY_CHK
-		0,
-		//CBRK_USB_CHK
-		0,
-		//CBRK_AIRSPD_CHK
-		0,
-		//CBRK_ENGINEFAIL
-		284953,
-		//CBRK_GPSFAIL
-		0,
-		//CBRK_FLIGHTTERM
-		121212,
-		//CBRK_VELPOSERR
-		0,
-		//	NAV_DLL_ACT
-		2,
-		//	NAV_RCL_ACT
-		2,
-		//	COM_DL_LOSS_T
-		10,
-		//	COM_RC_LOSS_T
-		0.5,
-		//	COM_RC_STICK_OV
-		12.0,
-		//	COM_RC_OVERRIDE
-		0,
-		//	COM_DL_REG_T
-		0,
-		//	COM_EF_THROT
-		0.5,
-		//	COM_EF_C2T
-		0.5,
-		//	COM_EF_TIME
-		10.0,
-		//	GF_ACTION
-		1,
-		//	COM_DISARM_LAND
-		3,
-		//	COM_LOW_BAT_ACT
-		1,
-		//	COM_OF_LOSS_T
-		0.0,
-		//	COM_OBL_ACT
-		0,
-		//	COM_OBL_RC_ACT
-		0,
-		//	COM_HOME_H_T
-		5.0,
-		//	COM_HOME_V_T
-		10.0,
-		//	COM_FLTMODE1
-		-1,
-		//	COM_FLTMODE2
-		-1,
-		//	COM_FLTMODE3
-		-1,
-		//	COM_FLTMODE4
-		-1,
-		//	COM_FLTMODE5
-		-1,
-		//	COM_FLTMODE6
-		-1,
-		//	COM_ARM_EKF_POS
-		0.5,
-		//	COM_ARM_EKF_VEL
-		0.5,
-		//	COM_ARM_EKF_HGT
-		1.0,
-		//	COM_ARM_EKF_YAW
-		0.5,
-		//	COM_ARM_EKF_AB
-		0.0050,
-		//	COM_ARM_EKF_GB
-		0.0009,
-		//	COM_ARM_IMU_ACC
-		0.7,
-		//	COM_ARM_IMU_GYR
-		0.2,
-		//	COM_POSCTL_NAVL
-		0
+		/** \brief Airframe type
+		 * 		0: Generic micro air vehicle
+		 * 		1: Fixed wing aircraft
+		 * 		2: Quadrotor
+		 * 		3: Coaxial helicopter
+		 * 		4: Normal helicopter with tail rotor
+		 * 		5: Ground installation
+		 * 		6: Operator control unit / ground control station
+		 * 		7: Airship, controlled
+		 * 		8: Free balloon, uncontrolled
+		 * 		9: Rocket
+		 * 		10: Ground rover
+		 * 		11: Surface vessel, boat, ship
+		 * 		12: Submarine
+		 * 		13: Hexarotor
+		 * 		14: Octorotor
+		 * 		15: Tricopter
+		 * 		16: Flapping wing
+		 * 		17: Kite
+		 * 		18: Onboard companion controller
+		 * 		19: Two-rotor VTOL using control surfaces in vertical operation in addition. Tailsitter.
+		 * 		20: Quad-rotor VTOL using a V-shaped quad config in vertical operation. Tailsitter.
+		 * 		21: Tiltrotor VTOL
+		 * 		22: VTOL reserved 2
+		 * 		23: VTOL reserved 3
+		 * 		24: VTOL reserved 4
+		 * 		25: VTOL reserved 5
+		 * 		26: Onboard gimbal
+		 * 		27: Onboard ADSB peripheral
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 1 > 27, default 2.
+		 */
+		int 	13,
+		/** \brief System ID
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 1 > 250, default 1.
+		 */
+		int 	1,
+		/** \brief Component ID
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 1 > 250, default 1.
+		 */
+		int 	1,
+		/** \brief Circuit breaker for power supply check
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 894281, default 0.
+		 */
+		int 	0;
+		/** \brief Circuit breaker for USB link check
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 197848, default 0.
+		 */
+		int 	0;
+		/** \brief Circuit breaker for airspeed sensor
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 162128, default 0.
+		 */
+		int 	0;
+		/** \brief Circuit breaker for engine failure detection
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 284953, default 0.
+		 */
+		int 	284953;
+		/** \brief Circuit breaker for GPS failure detection
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 240024, default 0.
+		 */
+		int 	0;
+		/** \brief Circuit breaker for flight termination
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 121212, default 121212.
+		 */
+		int 	121212;
+		/** \brief Circuit breaker for position error check
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 201607, default 0.
+		 */
+		int 	0;
+		/** \brief Set data link loss failsafe mode
+		 *
+		 *  \par Limits:
+		 *       default 0.
+		 */
+		int 	2;
+		/** \brief Set RC loss failsafe mode
+		 * 		0: Disabled
+		 * 		1: Loiter
+		 * 		2: Return to Land
+		 * 		3: Land at current position
+		 * 		4: RC Auto Recovery (CASA Outback Challenge rules)
+		 * 		5: Terminate
+		 * 		6: Lockdown
+		 *
+		 *  \par Limits:
+		 *       default 2.
+		 */
+		int 	2;
+		/** \brief Datalink loss time threshold
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 5 > 300 , default 10.
+		 */
+		int 	10;
+		/** \brief RC loss time threshold
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 35, default 0.5.
+		 */
+		float 	0.5;
+		/** \brief RC stick override threshold
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 5 > 40, default 12.0.
+		 */
+		float 	12.0;
+		/** \brief Enable RC stick override of auto modes
+		 *
+		 *  \par Limits:
+		 *       default 0.
+		 */
+		int 	0;
+		/** \brief Datalink regain time threshold
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 3 , default 0.
+		 */
+		int 	0;
+		/** \brief Engine Failure Throttle Threshold
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.0 > 1.0 , default 0.5.
+		 */
+		float 	0.5;
+		/** \brief Engine Failure Current/Throttle Threshold
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.0 > 50.0, default 5.0.
+		 */
+		float 	0.5;
+		/** \brief Engine Failure Time Threshold
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.0 > 60.0, default 10.0.
+		 */
+		float 	10;
+		/** \brief Geofence violation action
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 4, default 1.
+		 */
+		int 	1;
+		/** \brief Time-out for auto disarm after landing
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 20, default 0.
+		 */
+		int		3;
+		/** \brief Battery failsafe mode
+		 *
+		 *  \par Limits:
+		 *       default 0.
+		 */
+		int 	1;
+		/** \brief Time-out to wait when offboard connection is lost before triggering offboard lost action
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0 > 60, default 0.0.
+		 */
+		float 	0.0;
+		/** \brief Set offboard loss failsafe mode
+		 * 		0: Land at current position
+		 * 		1: Loiter
+		 * 		2: Return to Land
+		 *
+		 *  \par Limits:
+		 *       default 0.
+		 */
+		int 	0;
+		/** \brief Set offboard loss failsafe mode when RC is available
+		 * 		0: Position control
+		 * 		1: Altitude control
+		 * 		2: Manual
+		 * 		3: Return to Land
+		 * 		4: Land at current position
+		 * 		5: Loiter
+		 *
+		 *  \par Limits:
+		 *       default 0.
+		 */
+		int 	0;
+		/** \brief Home set horizontal threshold
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 2 > 15, default 5.0.
+		 */
+		float 	5.0;
+		/** \brief Home set vertical threshold
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 5 > 25, default 10.0.
+		 */
+		float 	10.0;
+		/** \brief First flightmode slot (1000-1160)
+		 * 		-1: Unassigned
+		 * 		0: Manual
+		 * 		1: Altitude
+		 * 		2: Position
+		 * 		3: Mission
+		 * 		4: Hold
+		 * 		5: Return
+		 * 		6: Acro
+		 * 		7: Offboard
+		 * 		8: Stabilized
+		 * 		9: Rattitude
+		 * 		10: Takeoff
+		 * 		11: Land
+		 * 		12: Follow Me
+		 *
+		 *  \par Limits:
+		 *       default -1.
+		 */
+		int 	-1;
+		/** \brief Second flightmode slot (1160-1320)
+		 * 		-1: Unassigned
+		 * 		0: Manual
+		 * 		1: Altitude
+		 * 		2: Position
+		 * 		3: Mission
+		 * 		4: Hold
+		 * 		5: Return
+		 * 		6: Acro
+		 * 		7: Offboard
+		 * 		8: Stabilized
+		 * 		9: Rattitude
+		 * 		10: Takeoff
+		 * 		11: Land
+		 * 		12: Follow Me
+		 *
+		 *  \par Limits:
+		 *       default -1.
+		 */
+		int 	-1;
+		/** \brief Third flightmode slot (1320-1480)
+		 * 		-1: Unassigned
+		 * 		0: Manual
+		 * 		1: Altitude
+		 * 		2: Position
+		 * 		3: Mission
+		 * 		4: Hold
+		 * 		5: Return
+		 * 		6: Acro
+		 * 		7: Offboard
+		 * 		8: Stabilized
+		 * 		9: Rattitude
+		 * 		10: Takeoff
+		 * 		11: Land
+		 * 		12: Follow Me
+		 *
+		 *  \par Limits:
+		 *       default -1.
+		 */
+		int 	-1;
+		/** \brief Fourth flightmode slot (1480-1640)
+		 * 		-1: Unassigned
+		 * 		0: Manual
+		 * 		1: Altitude
+		 * 		2: Position
+		 * 		3: Mission
+		 * 		4: Hold
+		 * 		5: Return
+		 * 		6: Acro
+		 * 		7: Offboard
+		 * 		8: Stabilized
+		 * 		9: Rattitude
+		 * 		10: Takeoff
+		 * 		11: Land
+		 * 		12: Follow Me
+		 *
+		 *  \par Limits:
+		 *       default -1.
+		 */
+		int 	-1;
+		/** \brief Fifth flightmode slot (1640-1800)
+		 * 		-1: Unassigned
+		 * 		0: Manual
+		 * 		1: Altitude
+		 * 		2: Position
+		 * 		3: Mission
+		 * 		4: Hold
+		 * 		5: Return
+		 * 		6: Acro
+		 * 		7: Offboard
+		 * 		8: Stabilized
+		 * 		9: Rattitude
+		 * 		10: Takeoff
+		 * 		11: Land
+		 * 		12: Follow Me
+		 *
+		 *  \par Limits:
+		 *       default -1.
+		 */
+		int 	-1;
+		/** \brief Sixth flightmode slot (1800-2000)
+		 * 		-1: Unassigned
+		 * 		0: Manual
+		 * 		1: Altitude
+		 * 		2: Position
+		 * 		3: Mission
+		 * 		4: Hold
+		 * 		5: Return
+		 * 		6: Acro
+		 * 		7: Offboard
+		 * 		8: Stabilized
+		 * 		9: Rattitude
+		 * 		10: Takeoff
+		 * 		11: Land
+		 * 		12: Follow Me
+		 *
+		 *  \par Limits:
+		 *       default -1.
+		 */
+		int 	-1;
+		/** \brief Maximum EKF position innovation test ratio that will allow arming
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.1 > 1.0, default 0.5.
+		 */
+		float 	0.5;
+		/** \brief Maximum EKF velocity innovation test ratio that will allow arming
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.1 > 1.0, default 0.5.
+		 */
+		float 	0.5;
+		/** \brief Maximum EKF height innovation test ratio that will allow arming
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.1 > 1.0, default 1.0.
+		 */
+		float 	1.0;
+		/** \brief Maximum EKF yaw innovation test ratio that will allow arming
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.1 > 1.0, default 0.5.
+		 */
+		float 	0.5;
+		/** \brief Maximum value of EKF gyro delta angle bias estimate that will allow arming
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.001 > 0.01, default 2.4e-3 .
+		 */
+		float 	0.0050;
+		/** \brief Maximum value of EKF gyro delta angle bias estimate that will allow arming
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.0001 > 0.0017, default 8.7e-4 .
+		 */
+		float 	0.0009;
+		/** \brief Maximum accelerometer inconsistency between IMU units that will allow arming
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.1 > 1.0, default 0.7.
+		 */
+		float 	0.7;
+		/** \brief Maximum rate gyro inconsistency between IMU units that will allow arming
+		 *
+		 *  \par Limits:
+		 *       Min > Max (incr.) 0.02 > 0.3, default 0.25.
+		 */
+		float 	0.2;
+		/** \brief Position control navigation loss response
+		 *
+		 *  \par Limits:
+		 *       default 0.
+		 */
+		int 	0;
 
 
 };

@@ -249,79 +249,636 @@ typedef enum {
 **
 */
 	VM_CFGTBL_LOAD_ERR_EID,
-
-	VM_ARMING_ILLEGAL_TRANSITION_ERR_EID,
-	VM_MAIN_ILLEGAL_TRANSITION_ERR_EID,
-	VM_NAV_ILLEGAL_TRANSITION_ERR_EID,
-	VM_ARMING_ENTERED_STANDBY_STATE_INFO_EID,
-	VM_ARMING_ENTERED_ARMED_STATE_INFO_EID,
-	VM_ARMING_ENTERED_STANDBY_ERROR_STATE_INFO_EID,
-	VM_ARMING_ENTERED_ARMED_ERROR_STATE_INFO_EID,
-	VM_MAIN_ENTERED_MANUAL_INFO_EID,
-	VM_MAIN_ENTERED_ALTITUDE_CONTROL_INFO_EID,
-	VM_MAIN_ENTERED_POSITION_CONTROL_INFO_EID,
-	VM_MAIN_ENTERED_AUTO_MISSION_INFO_EID,
-	VM_MAIN_ENTERED_AUTO_LOITER_INFO_EID,
-	VM_MAIN_ENTERED_AUTO_RTL_INFO_EID,
-	VM_MAIN_ENTERED_ACROBATIC_INFO_EID,
-	VM_MAIN_ENTERED_OFFBOARD_INFO_EID,
-	VM_MAIN_ENTERED_STABILIZE_INFO_EID,
-	VM_MAIN_ENTERED_RATTITUDE_INFO_EID,
-	VM_MAIN_ENTERED_AUTO_TAKEOFF_INFO_EID,
-	VM_MAIN_ENTERED_AUTO_LAND_INFO_EID,
-	VM_MAIN_ENTERED_AUTO_FOLLOW_TARGET_INFO_EID,
-	VM_MAIN_ENTERED_AUTO_PRECLAND_INFO_EID,
-	VM_NAVSM_ENTERED_MANUAL_INFO_EID,
-	VM_NAVSN_ENTERED_ALTCTL_INFO_EID,
-	VM_NAVSN_ENTERED_POSCTL_INFO_EID,
-	VM_NAVSN_ENTERED_AUTOMISSION_INFO_EID,
-	VM_NAVSN_ENTERED_AUTOLOITER_INFO_EID,
-	VM_NAVSN_ENTERED_RTL_INFO_EID,
-	VM_NAVSN_ENTERED_AUTORCRECOVER_INFO_EID,
-	VM_NAVSN_ENTERED_AUTORTGS_INFO_EID,
-	VM_NAVSN_ENTERED_LAND_ENGINE_FAIL_INFO_EID,
-	VM_NAVSN_ENTERED_LAND_GPS_FAIL_INFO_EID,
-	VM_NAVSN_ENTERED_ACRO_INFO_EID,
-	VM_NAVSN_ENTERED_DESCEND_INFO_EID,
-	VM_NAVSN_ENTERED_TERMINATION_INFO_EID,
-	VM_NAVSN_ENTERED_OFFBOARD_INFO_EID,
-	VM_NAVSN_ENTERED_STABILIZE_INFO_EID,
-	VM_NAVSN_ENTERED_RATTITUDE_INFO_EID,
-	VM_NAVSN_ENTERED_AUTO_TAKEOFF_INFO_EID,
-	VM_NAVSN_ENTERED_AUTO_LAND_INFO_EID,
-	VM_NAVSN_ENTERED_AUTO_FOLLOW_TARGET_INFO_EID,
-	VM_NAVSN_ENTERED_AUTO_PRECLAND_INFO_EID,
-	VM_IN_UNKNOWN_STATE_ERR_EID,
-
-	VM_HOMESET_INFO_EID,
-	VM_LND_INIT_INFO_EID,
-	VM_SAFETY_DISARM_INFO_EID,
-	VM_SAFETY_INFO_EID,
-	VM_LOW_BAT_INFO_EID,
-	VM_CRITICAL_BAT_INFO_EID,
-	VM_DANGER_BAT_LEVEL_INFO_EID,
-
-	VM_RC_SIGN_REGAINED_INFO_EID,
-	VM_RC_SIGN_LOST_INFO_EID,
-	VM_RC_STK_DISARM_REJ_INFO_EID,
-	VM_RC_STK_ARM_REJ_INFO_EID,
-	VM_RC_DISARM_INFO_EID,
-	VM_RC_ARM_INFO_EID,
-	VM_RC_KIL_SWTCH_INFO_EID,
-	VM_RC_LTR_INFO_EID,
-	VM_RC_RTL_INFO_EID,
-	VM_RC_POSCTL_INFO_EID,
-	VM_RC_MAN_INFO_EID,
-
-	VM_PRE_ARM_BAT_CHECK_INFO_EID,
-	VM_PRE_ARM_SAFETY_CHECK_INFO_EID,
-	VM_PRE_ARM_SENSORS_CHECK_INFO_EID,
-	VM_SEN_NOT_READY_INFO_EID,
-	VM_REQ_POS_CTL_ERR_EID,
-	VM_REQ_ALT_CTL_ERR_EID,
-	VM_REQ_ACRO_ERR_EID,
-
-
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_ARMING_ILLEGAL_TRANSITION_ERR_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAV_ILLEGAL_TRANSITION_ERR_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_ARMING_ENTERED_STANDBY_STATE_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_ARMING_ENTERED_ARMED_STATE_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_ARMING_ENTERED_STANDBY_ERROR_STATE_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_ARMING_ENTERED_ARMED_ERROR_STATE_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAVSM_ENTERED_MANUAL_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAVSN_ENTERED_ALTCTL_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAVSN_ENTERED_POSCTL_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAVSN_ENTERED_AUTOLOITER_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAVSN_ENTERED_RTL_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAVSN_ENTERED_ACRO_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAVSN_ENTERED_STABILIZE_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAVSN_ENTERED_RATTITUDE_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAVSN_ENTERED_AUTO_TAKEOFF_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_NAVSN_ENTERED_AUTO_LAND_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_IN_UNKNOWN_STATE_ERR_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_HOMESET_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_LND_INIT_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_SAFETY_DISARM_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_SAFETY_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_LOW_BAT_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_CRITICAL_BAT_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_DANGER_BAT_LEVEL_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_SIGN_REGAINED_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_SIGN_LOST_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_STK_DISARM_REJ_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_STK_ARM_REJ_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_DISARM_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_ARM_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_KIL_SWTCH_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_LTR_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_RTL_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_POSCTL_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_RC_MAN_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_PRE_ARM_BAT_CHECK_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_PRE_ARM_SAFETY_CHECK_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_PRE_ARM_SENSORS_CHECK_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_SEN_NOT_READY_INFO_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_REQ_POS_CTL_ERR_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_REQ_ALT_CTL_ERR_EID,
+/** \brief <tt> '' </tt>
+**  \event <tt> '' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the CFS VM Task fails to
+**  load the VM configuration table.
+**
+**  The 32 bit hexadecimal number is the error code returned by CFE
+**  #CFE_TBL_Load function.
+**
+*/
+VM_REQ_ACRO_ERR_EID,
 
 /** \brief <tt> This is a count of all the app events and should not be used. </tt> */
 	VM_EVT_CNT

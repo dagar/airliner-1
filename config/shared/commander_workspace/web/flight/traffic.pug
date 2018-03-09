@@ -28,6 +28,40 @@ block main
             style.
               @import url(bower_components/cesium/Source/Widgets/widgets.css);
             #cesiumContainer.fullSize
+    .row.row-fluid
+      article.col-xs-10.col-sm-6.col-md-6.col-lg-6(style="max-width:450px")
+        #wid-SA.jarviswidget.jarviswidget-color-blueDark(data-widget-editbutton='false')
+          header(style="overflow:hidden;")
+            span.widget-icon
+              i.fa.fa-table
+            h2 Vehicle Global Position
+          div
+            .jarviswidget-editbox
+              input.form-control(type='text')
+            .widget-body
+              .table-responsive
+                table.table.table-condensed
+                  tbody
+                    tr
+                      th Timestamp:
+                      td
+                        span(data-sage={'tlm': [{'name': '/CFS/PX4/VGP_Timestamp'}]}) ---
+                    tr
+                      th Lat:
+                      td
+                        span(data-sage={'tlm': [{'name': '/CFS/PX4/VGP_Lat'}]}) ---
+                    tr
+                      th Lon:
+                      td
+                        span(data-sage={'tlm': [{'name': '/CFS/PX4/VGP_Lon'}]}) ---
+                    tr
+                      th Altitude:
+                      td
+                        span(data-sage={'tlm': [{'name': '/CFS/PX4/VGP_PressureAlt'}]}) ---
+                    tr
+                      th Satellites Used:
+                      td
+                        span(data-sage={'tlm': [{'name': '/CFS/PX4/VGPP_SatellitesUsed'}]}) ---
 
   script.
     loadScript('node_modules/cesium/Build/CesiumUnminified/Cesium.js', function () {
@@ -37,6 +71,18 @@ block main
       var AIRCRAFT = {};
       var tracking_step_limit = 10;
       var outdated_seconds = 30;
+      
+      
+      function AddMyVehicle(){
+        var lat = parseFloat($("[data-sage]")[1].innerHTML);
+        var lon = parseFloat($("[data-sage]")[2].innerHTML);
+        var alt = parseFloat($("[data-sage]")[3].innerHTML);
+        console.log(lat);
+        console.log(lon);
+        console.log(alt);
+        addPoint(lon,lat,alt);
+        
+      }
       
       function prepareRoute(lo,la,h,t,hex){
         var INSTANCE_VARIABLES = {lo:lo,la:la,h:h,t:t};
@@ -86,6 +132,20 @@ block main
         return ENTITY.id;    
       }
       
+      function addMainPoint(lo,la,h) {
+        var color = Cesium.Color.fromHsl((0.9 - (20 * 0.5)), 1.0, 0.5);
+        var surfacePosition = Cesium.Cartesian3.fromDegrees(lo, la, 0);
+        var heightPosition = Cesium.Cartesian3.fromDegrees(lo, la, h );
+        //WebGL Globe only contains lines, so that's the only graphics we create.
+        var polyline = new Cesium.PolylineGraphics();
+        polyline.material = new Cesium.ColorMaterialProperty(color);
+        polyline.width = new Cesium.ConstantProperty(2);
+        polyline.followSurface = new Cesium.ConstantProperty(false);
+        polyline.positions = new Cesium.ConstantProperty([surfacePosition, heightPosition]);
+        var ENTITY = viewer.entities.add({polyline : polyline});
+        return ENTITY.id;    
+      }
+      
       function cleanPoints(current_time){
         for(var k in AIRCRAFT){
         var T_QUE3 = AIRCRAFT[k];
@@ -118,10 +178,10 @@ block main
 
       
       function executeQuery(){
-      	
         session.getADSBJson(function(adsb) {
           //variables
           console.log(adsb)
+          AddMyVehicle()
           var time_stamp = Math.floor(Date.now());
           //message_counter = adsb.messages
           for(i=0; i<adsb.length;i++){
@@ -137,7 +197,7 @@ block main
               }catch(err1){
                 console.log("INTERTNAL ERROR: [NOT ABLE TO CLEAR POINTS] "+err1)
               }
-              console.log(typeof(latitude)+"  "+typeof(longitude))
+              //console.log(typeof(latitude)+"  "+typeof(longitude))
               if (isNaN(latitude) && isNaN(logitude) && isNaN(height)){
                 console.log("skipped")
               }else{
