@@ -14,20 +14,15 @@
 **       when creating ground system database entries that require
 **       file index numbers for command arguments.
 */
-/* All events */
-#define FILE_ALL_EVENTS                     0
-/* All housekeeping packets */
-#define FILE_ALL_APP_HK_PKTS                1
-/* Log all flight application messages */
-#define FILE_FLIGHT_APP_TLM_PKTS            2
-/* Log just default flight application messages */
-#define FILE_FLIGHT_DEFAULT_APP_TLM_PKTS    3
-/* Log just sensor application messages */
-#define FILE_FLIGHT_SENSOR_APP_TLM_PKTS     4
-/* Log all flight messages at a low rate */
-#define FILE_FLIGHT_MIN_APP_TLM_PKTS        5
-/* CFE core applications commands */
-#define FILE_CORE_APP_CMD_PKTS              6
+#define FILE_ALL_EVENTS       0
+
+#define FILE_ALL_APP_HK_PKTS  1
+#define FILE_ALL_APP_TLM_PKTS 2
+
+#define FILE_ALL_HW_TLM_PKTS  3
+
+#define FILE_CFE_APP_HK_PKTS  4
+#define FILE_CFE_APP_TLM_PKTS 5
 
 
 /*
@@ -35,7 +30,7 @@
 */
 DS_DestFileTable_t DS_DestFileTable =
 {
-  /* .Descriptor = */ "Events",
+  /* .Descriptor = */ "Sample File Table Data",
   /* .File       = */
   {
     /* File Index 00 -- event packets only */
@@ -43,14 +38,14 @@ DS_DestFileTable_t DS_DestFileTable =
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/log/",
+      /* .Pathname      = */ "set_by_cmd_b4_enable",
       /* .Basename      = */ "events",
       /* .Extension     = */ ".dat",
 
       /* .FileNameType  = */ DS_BY_COUNT,
-      /* .EnableState   = */ DS_ENABLED,
-      /* .MaxFileSize   = */ (1024 * 1024 * 200),         /* 200 M-bytes */
-      /* .MaxFileAge    = */ (60 * 60 * 2),               /* 2 hours */
+      /* .EnableState   = */ DS_DISABLED,
+      /* .MaxFileSize   = */ (1024 * 32),               /* 32 K-bytes */
+      /* .MaxFileAge    = */ (60 * 45),                 /* 45 minutes */
       /* .SequenceCount = */ 1000,
     },
     /* File Index 01 -- application housekeeping packets */
@@ -58,90 +53,90 @@ DS_DestFileTable_t DS_DestFileTable =
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/log/",
-      /* .Basename      = */ "hk",
+      /* .Pathname      = */ "set_by_cmd_b4_enable",
+      /* .Basename      = */ "app",
       /* .Extension     = */ ".hk",
 
-      /* .FileNameType  = */ DS_BY_COUNT,
-      /* .EnableState   = */ DS_ENABLED,
-      /* .MaxFileSize   = */ (1024 * 1024 * 200),         /* 200 M-bytes */
+      /* .FileNameType  = */ DS_BY_TIME,
+      /* .EnableState   = */ DS_DISABLED,
+      /* .MaxFileSize   = */ (1024 * 1024 * 2),         /* 2 M-bytes */
       /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
-      /* .SequenceCount = */ 2000,
+      /* .SequenceCount = */ DS_UNUSED,
     },
     /* File Index 02 -- application telemetry packets */
     {
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/log/",
-      /* .Basename      = */ "flight",
+      /* .Pathname      = */ "set_by_cmd_b4_enable",
+      /* .Basename      = */ "app",
       /* .Extension     = */ ".tlm",
 
       /* .FileNameType  = */ DS_BY_COUNT,
-      /* .EnableState   = */ DS_ENABLED,
-      /* .MaxFileSize   = */ (1024 * 1024 * 200),       /* 200 M-bytes */
+      /* .EnableState   = */ DS_DISABLED,
+      /* .MaxFileSize   = */ (1024 * 1024 * 1024 * 1),  /* 1 G-byte */
       /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
-      /* .SequenceCount = */ 3000,
+      /* .SequenceCount = */ 2000,
     },
     /* File Index 03 -- hardware telemetry packets */
     {
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/log/",
-      /* .Basename      = */ "default",
-      /* .Extension     = */ ".tlm",
+      /* .Pathname      = */ "set_by_cmd_b4_enable",
+      /* .Basename      = */ "hw",
+      /* .Extension     = */ "tlm",
 
       /* .FileNameType  = */ DS_BY_COUNT,
       /* .EnableState   = */ DS_DISABLED,
-      /* .MaxFileSize   = */ (1024 * 1024 * 200),       /* 200 M-bytes */
+      /* .MaxFileSize   = */ (1024 * 1024 * 2),         /* 2 M-bytes */
       /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
-      /* .SequenceCount = */ 4000,
+      /* .SequenceCount = */ 3000,
     },
     /* File Index 04 -- cFE housekeeping packets */
     {
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/log/",
-      /* .Basename      = */ "sensor",
-      /* .Extension     = */ ".tlm",
+      /* .Pathname      = */ "set_by_cmd_b4_enable",
+      /* .Basename      = */ "cfe",
+      /* .Extension     = */ "hk",
 
       /* .FileNameType  = */ DS_BY_COUNT,
       /* .EnableState   = */ DS_DISABLED,
-      /* .MaxFileSize   = */ (1024 * 1024 * 200),       /* 200 M-bytes */
+      /* .MaxFileSize   = */ (1024 * 1024 * 2),         /* 2 M-bytes */
       /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
-      /* .SequenceCount = */ 5000,
+      /* .SequenceCount = */ 4000,
     },
     /* File Index 05 -- cFE telemetry packets */
     {
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/log/",
-      /* .Basename      = */ "minimum",
-      /* .Extension     = */ ".tlm",
+      /* .Pathname      = */ "set_by_cmd_b4_enable",
+      /* .Basename      = */ "cfe",
+      /* .Extension     = */ "tlm",
 
       /* .FileNameType  = */ DS_BY_COUNT,
       /* .EnableState   = */ DS_DISABLED,
-      /* .MaxFileSize   = */ (1024 * 1024 * 200),       /* 200 M-bytes */
+      /* .MaxFileSize   = */ (1024 * 1024 * 2),         /* 2 M-bytes */
       /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
-      /* .SequenceCount = */ 6000,
+      /* .SequenceCount = */ 5000,
     },
     /* File Index 06 */
     {
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/log/",
-      /* .Basename      = */ "commands",
-      /* .Extension     = */ ".cmd",
+      /* .Pathname      = */ DS_EMPTY_STRING,
+      /* .Basename      = */ DS_EMPTY_STRING,
+      /* .Extension     = */ DS_EMPTY_STRING,
 
-      /* .FileNameType  = */ DS_BY_COUNT,
-      /* .EnableState   = */ DS_ENABLED,
-      /* .MaxFileSize   = */ (1024 * 1024 * 200),       /* 200 M-bytes */
-      /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
-      /* .SequenceCount = */ 7000,
+      /* .FileNameType  = */ DS_UNUSED,
+      /* .EnableState   = */ DS_UNUSED,
+      /* .MaxFileSize   = */ DS_UNUSED,
+      /* .MaxFileAge    = */ DS_UNUSED,
+      /* .SequenceCount = */ DS_UNUSED,
     },
     /* File Index 07 */
     {
