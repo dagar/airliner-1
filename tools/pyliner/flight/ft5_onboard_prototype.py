@@ -211,11 +211,12 @@ def vehicle_stable_hover():
         {'name':'DataSource', 'value':0}]})
 
 
-def vehicle_full_forward():
+def vehicle_forward(power = 0.5):
+    "Move forward " + str(power)
     airliner.send_telemetry(
         {'name':'/Airliner/CNTL/ManualSetpoint', 'args':[
         {'name':'Timestamp', 'value':airliner.get_time()},
-        {'name':'X', 'value':0.5},
+        {'name':'X', 'value':power},
         {'name':'Y', 'value':0.0},
         {'name':'Z', 'value':0.5},
         {'name':'R', 'value':0.0},
@@ -242,13 +243,13 @@ def vehicle_full_forward():
         {'name':'DataSource', 'value':0}]})
 
 
-def vehicle_full_left():
-    print "Move left"
+def vehicle_left(power = 0.5):
+    print "Move left " + str(power)
     airliner.send_telemetry(
         {'name':'/Airliner/CNTL/ManualSetpoint', 'args':[
         {'name':'Timestamp', 'value':airliner.get_time()},
         {'name':'X', 'value':0.0},
-        {'name':'Y', 'value':-0.5},
+        {'name':'Y', 'value':-(power)},
         {'name':'Z', 'value':0.5},
         {'name':'R', 'value':0.0},
         {'name':'Flaps', 'value':0.0},
@@ -274,12 +275,12 @@ def vehicle_full_left():
         {'name':'DataSource', 'value':0}]})
 
 
-def vehicle_full_reverse():
-    print "Move backwards"
+def vehicle_reverse(power = 0.5):
+    print "Move backwards " + str(power)
     airliner.send_telemetry(
         {'name':'/Airliner/CNTL/ManualSetpoint', 'args':[
         {'name':'Timestamp', 'value':airliner.get_time()},
-        {'name':'X', 'value':-0.5},
+        {'name':'X', 'value':-(power)},
         {'name':'Y', 'value':0.0},
         {'name':'Z', 'value':0.5},
         {'name':'R', 'value':0.0},
@@ -306,13 +307,13 @@ def vehicle_full_reverse():
         {'name':'DataSource', 'value':0}]})
 
 
-def vehicle_full_right():
-    print "Move right"
+def vehicle_right(power = 0.5):
+    print "Move right " + str(power)
     airliner.send_telemetry(
         {'name':'/Airliner/CNTL/ManualSetpoint', 'args':[
         {'name':'Timestamp', 'value':airliner.get_time()},
         {'name':'X', 'value':0.0},
-        {'name':'Y', 'value':0.5},
+        {'name':'Y', 'value':power},
         {'name':'Z', 'value':0.5},
         {'name':'R', 'value':0.0},
         {'name':'Flaps', 'value':0.0},
@@ -338,13 +339,14 @@ def vehicle_full_right():
         {'name':'DataSource', 'value':0}]})
 
 
-def vehicle_full_down():
+def vehicle_down(power = 0.0):
+    print "Move down " + str(power)
     airliner.send_telemetry(
         {'name':'/Airliner/CNTL/ManualSetpoint', 'args':[
         {'name':'Timestamp', 'value':airliner.get_time()},
         {'name':'X', 'value':0.0},
         {'name':'Y', 'value':0.0},
-        {'name':'Z', 'value':0.0},
+        {'name':'Z', 'value':power},
         {'name':'R', 'value':0.0},
         {'name':'Flaps', 'value':0.0},
         {'name':'Aux1', 'value':0.0},
@@ -369,13 +371,14 @@ def vehicle_full_down():
         {'name':'DataSource', 'value':0}]})
 
 
-def vehicle_full_up():
+def vehicle_up(power = 0.65):
+    "Move Up" + str(power)
     airliner.send_telemetry(
         {'name':'/Airliner/CNTL/ManualSetpoint', 'args':[
         {'name':'Timestamp', 'value':airliner.get_time()},
         {'name':'X', 'value':0.0},
         {'name':'Y', 'value':0.0},
-        {'name':'Z', 'value':0.65},
+        {'name':'Z', 'value':power},
         {'name':'R', 'value':0.0},
         {'name':'Flaps', 'value':0.0},
         {'name':'Aux1', 'value':0.0},
@@ -434,6 +437,7 @@ def vehicle_land():
 
 
 def vehicle_orbit_cw():
+    print "Orbit CW"
     airliner.send_telemetry(
         {'name':'/Airliner/CNTL/ManualSetpoint', 'args':[
         {'name':'Timestamp', 'value':airliner.get_time()},
@@ -465,6 +469,7 @@ def vehicle_orbit_cw():
 
 
 def vehicle_orbit_ccw():
+    print "Orbit CCW"
     airliner.send_telemetry(
         {'name':'/Airliner/CNTL/ManualSetpoint', 'args':[
         {'name':'Timestamp', 'value':airliner.get_time()},
@@ -496,6 +501,7 @@ def vehicle_orbit_ccw():
 
 
 def vehicle_spiral_ccw():
+    print "Sprial CCW"
     airliner.send_telemetry(
         {'name':'/Airliner/CNTL/ManualSetpoint', 'args':[
         {'name':'Timestamp', 'value':airliner.get_time()},
@@ -527,6 +533,7 @@ def vehicle_spiral_ccw():
 
 
 def vehicle_spiral_cw():
+    print "Spiral CW"
     airliner.send_telemetry(
         {'name':'/Airliner/CNTL/ManualSetpoint', 'args':[
         {'name':'Timestamp', 'value':airliner.get_time()},
@@ -559,12 +566,12 @@ def vehicle_spiral_cw():
 def vehicle_fly_vertical_square():
     print "Fly vertical sqaure"
     vehicle_fly_up(10)
-    vehicle_full_right()
+    vehicle_right()
     time.sleep(3)
     vehicle_stable_hover()
     time.sleep(1)
     vehicle_fly_down(10)
-    vehicle_full_left()
+    vehicle_left()
     time.sleep(3)
     vehicle_stable_hover()
     time.sleep(1)
@@ -575,7 +582,7 @@ def vehicle_fly_up(deltaZ):
     print "initial_baro_sensor_combined: " + str(initial_baro_sensor_combined)
     current_baro_sensor_combined = initial_baro_sensor_combined
     while(current_baro_sensor_combined < (initial_baro_sensor_combined + deltaZ)):
-        vehicle_full_up()
+        vehicle_up()
         time.sleep(1)
         current_baro_sensor_combined = airliner.get_tlm_value('/Airliner/SENS/HK/BaroAlt')
         print "baro_sensor_combined: " + str(current_baro_sensor_combined)
@@ -589,7 +596,48 @@ def vehicle_fly_down(deltaZ):
     print "initial_baro_sensor_combined: " + str(initial_baro_sensor_combined)
     current_baro_sensor_combined = initial_baro_sensor_combined
     while(current_baro_sensor_combined > (initial_baro_sensor_combined - deltaZ)):
-        vehicle_full_down()
+        vehicle_down()
+        time.sleep(1)
+        current_baro_sensor_combined = airliner.get_tlm_value('/Airliner/SENS/HK/BaroAlt')
+        print "baro_sensor_combined: " + str(current_baro_sensor_combined)
+    vehicle_stable_hover()
+    time.sleep(1)
+
+def vehicle_fly_direction(direction, delta):
+    print "Move " + direction + " " + str(delta) + " meters"
+    # read initial lat long
+    origin_lat = airliner.get_tlm_value('/Airliner/GPS/HK/Lat') / 10000000.0
+    origin_lon = airliner.get_tlm_value('/Airliner/GPS/HK/Lon') / 10000000.0
+    print "origin lat: " + str(origin_lat) + " lon: " + str(origin_lon)
+    current_lat = origin_lat
+    current_lon = origin_lon
+    travel = distance([origin_lat, origin_lon], [current_lat, current_lon])
+    while(travel < delta):
+        if (direction == "forward"):
+            vehicle_forward(0.25)
+        elif (direction == "reverse"):
+            vehicle_reverse(0.25)
+        elif(direction == "right"):
+            vehicle_right(0.25)
+        elif (direction == "left"):
+            vehicle_left(0.25)
+        else:
+            print "error: unkonwn direction: " + str(direction)
+        time.sleep(1)
+        current_lat = airliner.get_tlm_value('/Airliner/GPS/HK/Lat') / 10000000.0
+        current_lon = airliner.get_tlm_value('/Airliner/GPS/HK/Lon') / 10000000.0
+        travel = distance([origin_lat, origin_lon], [current_lat, current_lon])
+        print "current lat: " + str(current_lat) + " lon: " + str(origin_lon) + " distance: " + str(travel)
+    vehicle_stable_hover()
+    time.sleep(1)
+
+def vehicle_fly_left(deltaX):
+    print "Move left " + str(deltaX) + " meters"
+    initial_lat = airliner.get_tlm_value('/Airliner/SENS/HK/BaroAlt')
+    print "initial_baro_sensor_combined: " + str(initial_baro_sensor_combined)
+    current_baro_sensor_combined = initial_baro_sensor_combined
+    while(current_baro_sensor_combined > (initial_baro_sensor_combined - deltaZ)):
+        vehicle_down()
         time.sleep(1)
         current_baro_sensor_combined = airliner.get_tlm_value('/Airliner/SENS/HK/BaroAlt')
         print "baro_sensor_combined: " + str(current_baro_sensor_combined)
@@ -644,42 +692,18 @@ def check_stable_hover(timeout = 5):
 
 def vehicle_fly_square_ccw():
     print "Fly CCW square"
-    vehicle_full_forward()
-    time.sleep(1)
-    vehicle_stable_hover()
-    time.sleep(1)
-    vehicle_full_left()
-    time.sleep(1)
-    vehicle_stable_hover()
-    time.sleep(1)
-    vehicle_full_reverse()
-    time.sleep(1)
-    vehicle_stable_hover()
-    time.sleep(1)
-    vehicle_full_right()
-    time.sleep(1)
-    vehicle_stable_hover()
-    time.sleep(1)
+    vehicle_fly_direction("reverse", 4)
+    vehicle_fly_direction("right", 4)
+    vehicle_fly_direction("forward", 4)
+    vehicle_fly_direction("left", 4)
 
 
 def vehicle_fly_square_cw():
     print "Fly CW square"
-    vehicle_full_forward()
-    time.sleep(1)
-    vehicle_stable_hover()
-    time.sleep(1)
-    vehicle_full_right()
-    time.sleep(1)
-    vehicle_stable_hover()
-    time.sleep(1)
-    vehicle_full_reverse()
-    time.sleep(1)
-    vehicle_stable_hover()
-    time.sleep(1)
-    vehicle_full_left()
-    time.sleep(1)
-    vehicle_stable_hover()
-    time.sleep(1)
+    vehicle_fly_direction("forward", 4)
+    vehicle_fly_direction("right", 4)
+    vehicle_fly_direction("reverse", 4)
+    vehicle_fly_direction("left", 4)
 
 
 def vehicle_fly_orbit_cw(delay):
@@ -724,6 +748,43 @@ def vehicle_fly_spiral_cw(deltaZ):
     time.sleep(1)
     vehicle_fly_down(deltaZ)
 
+import math
+def distance(origin, destination):
+    """
+    Calculate the Haversine distance.
+
+    Parameters
+    ----------
+    origin : tuple of float
+        (lat, long)
+    destination : tuple of float
+        (lat, long)
+
+    Returns
+    -------
+    distance_in_km : float
+
+    Examples
+    --------
+    >>> origin = (48.1372, 11.5756)  # Munich
+    >>> destination = (52.5186, 13.4083)  # Berlin
+    >>> round(distance(origin, destination), 1)
+    504.2
+    """
+    lat1, lon1 = origin
+    lat2, lon2 = destination
+    radius = 6371  # km
+
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = (math.sin(dlat / 2) * math.sin(dlat / 2) +
+         math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
+         math.sin(dlon / 2) * math.sin(dlon / 2))
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    d = radius * c
+    return d*1000
+
+
 # vehicle control
 vehicle_arm()
 time.sleep(5)
@@ -732,22 +793,32 @@ vehicle_posctl_mode()
 vehicle_stable_hover()
 check_stable_hover()
 
-vehicle_fly_vertical_square()
-vehicle_stable_hover()
-check_stable_hover()
+i = 0
+while (i > 0):
+    i -= 1
+    vehicle_fly_direction("forward", 10)
+    vehicle_fly_direction("right", 1)
+    vehicle_fly_direction("reverse", 10)
+    #vehicle_fly_direction("left", 5)
+    vehicle_fly_direction("right", 1)
 
-vehicle_fly_up(5)
-vehicle_fly_orbit_cw(7)
-vehicle_stable_hover()
-check_stable_hover()
-vehicle_fly_orbit_ccw(7)
-vehicle_fly_down(5)
+
+#vehicle_fly_vertical_square()
+#vehicle_stable_hover()
+#check_stable_hover()
+
+#vehicle_fly_up(5)
+#vehicle_fly_orbit_cw(7)
+#vehicle_stable_hover()
+#check_stable_hover()
+#vehicle_fly_orbit_ccw(7)
+#vehicle_fly_down(5)
 
 vehicle_fly_square_ccw()
 vehicle_fly_square_cw()
 
-vehicle_fly_spiral_ccw(10)
-vehicle_fly_spiral_cw(10)
+#vehicle_fly_spiral_ccw(10)
+#vehicle_fly_spiral_cw(10)
 
 vehicle_land()
 check_land()
