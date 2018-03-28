@@ -40,3 +40,6 @@
 [submodule "apps/sch"]
 	path = apps/sch
 	url = git@bitbucket.org:windhoverlabs/sch.git
+[submodule "apps/hk"]
+	path = apps/hk
+	url = git@bitbucket.org:windhoverlabs/hk.git
