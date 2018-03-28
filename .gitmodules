@@ -7,3 +7,36 @@
 [submodule "apps/to"]
 	path = apps/to
 	url = git@bitbucket.org:windhoverlabs/to.git
+[submodule "apps/cf"]
+	path = apps/cf
+	url = git@bitbucket.org:windhoverlabs/cf.git
+[submodule "apps/cfs_lib"]
+	path = apps/cfs_lib
+	url = git@bitbucket.org:windhoverlabs/cfs_lib.git
+[submodule "apps/cs"]
+	path = apps/cs
+	url = git@bitbucket.org:windhoverlabs/cs.git
+[submodule "apps/ds"]
+	path = apps/ds
+	url = git@bitbucket.org:windhoverlabs/ds.git
+[submodule "apps/fm"]
+	path = apps/fm
+	url = git@bitbucket.org:windhoverlabs/fm.git
+[submodule "apps/hs"]
+	path = apps/hs
+	url = git@bitbucket.org:windhoverlabs/hs.git
+[submodule "apps/lc"]
+	path = apps/lc
+	url = git@bitbucket.org:windhoverlabs/lc.git
+[submodule "apps/md"]
+	path = apps/md
+	url = git@bitbucket.org:windhoverlabs/md.git
+[submodule "apps/mm"]
+	path = apps/mm
+	url = git@bitbucket.org:windhoverlabs/mm.git
+[submodule "apps/sbn"]
+	path = apps/sbn
+	url = git@bitbucket.org:windhoverlabs/sbn.git
+[submodule "apps/sch"]
+	path = apps/sch
+	url = git@bitbucket.org:windhoverlabs/sch.git
