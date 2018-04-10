@@ -43,3 +43,6 @@
 [submodule "apps/hk"]
 	path = apps/hk
 	url = git@bitbucket.org:windhoverlabs/hk.git
+[submodule "tools/pygazebo"]
+	path = tools/pygazebo
+	url = git@bitbucket.org:windhoverlabs/pygazebo.git
